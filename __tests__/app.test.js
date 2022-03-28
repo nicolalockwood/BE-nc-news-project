@@ -9,7 +9,7 @@ afterAll(() => db.end());
 beforeEach(() => seed(testData));
 
 describe('GET /api/topics', () => {
-	test('200: reposinse with an array of topic objects each with slug and description proerties', () => {
+	test('200: responds with an array of topic objects each with slug and description proerties', () => {
 		return request(app)
 			.get('/api/topics')
 			.expect(200)
