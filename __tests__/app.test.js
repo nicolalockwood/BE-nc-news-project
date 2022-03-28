@@ -23,4 +23,12 @@ describe('GET /api/topics', () => {
 				});
 			});
 	});
+	test('404: return "Path not found" error when invalid URL is passed', () => {
+		return request(app)
+			.get('/api/badpath')
+			.expect(404)
+			.then((res) => {
+				expect(res.body.msg).toEqual('Path not found');
+			});
+	});
 });
