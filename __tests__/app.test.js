@@ -50,12 +50,20 @@ describe('GET /api/articles/:article_id', () => {
 				});
 			});
 	});
-	test('404: Responds with message for valid but none recognised article ID', () => {
+	test('404: Responds with message for valid but not recognised article ID', () => {
 		return request(app)
 			.get('/api/articles/1000')
 			.expect(404)
 			.then((res) => {
 				expect(res.body).toMatchObject({ msg: 'Article not found' });
+			});
+	});
+	test('400: Responds with bad request message for invalid format', () => {
+		return request(app)
+			.get('/api/articles/six')
+			.expect(400)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'Bad request' });
 			});
 	});
 });
