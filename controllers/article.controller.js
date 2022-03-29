@@ -12,7 +12,7 @@ exports.getTopics = (req, res, next) => {
 		.catch((err) => next(err));
 };
 
-exports.getArticleID = (req, res, next) => {
+exports.byArticleID = (req, res, next) => {
 	const { article_id } = req.params;
 	selectArticleID(article_id)
 		.then((article) => {

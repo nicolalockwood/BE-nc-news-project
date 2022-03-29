@@ -2,7 +2,7 @@ const express = require('express');
 const format = require('pg-format');
 const {
 	getTopics,
-	getArticleID,
+	byArticleID,
 	patchArticleID,
 } = require('./controllers/article.controller');
 const {
@@ -11,14 +11,18 @@ const {
 	internalServerError,
 } = require('./controllers/err.controllers');
 
+const {} = require('./controllers/user.controller');
+
 const app = express();
 app.use(express.json());
 
 app.get('/api/topics', getTopics);
 
-app.get('/api/articles/:article_id', getArticleID);
+app.get('/api/articles/:article_id', byArticleID);
 
 app.patch('/api/articles/:article_id', patchArticleID);
+
+// app.get('/api/users', getUsers);
 
 app.use(psqlErrors);
 app.use(nonPsqlErrors);

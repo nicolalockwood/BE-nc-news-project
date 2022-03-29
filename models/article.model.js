@@ -2,11 +2,12 @@ const { query } = require('../db/connection');
 const db = require('../db/connection');
 const format = require('pg-format');
 
-exports.selectTopics = async () => {
+exports.selectTopics = () => {
 	let queryStr = `SELECT * FROM topics`;
 
-	const result = await db.query(queryStr);
-	return result.rows;
+	return db.query(queryStr).then(({ rows }) => {
+		return rows;
+	});
 };
 
 exports.selectArticleID = (article_id) => {
@@ -39,7 +40,7 @@ exports.updateArticleID = (voteUpdate, id) => {
 		.then((newVote) => {
 			return db
 				.query(
-					'UPDATE articles SET votes =$1 WHERE article_id =$2 RETURNING *;',
+					'UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *;',
 					[newVote, id]
 				)
 				.then(({ rows }) => {
