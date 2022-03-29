@@ -144,9 +144,3 @@ describe('PATCH /api/articles/:article_id', () => {
 			});
 	});
 });
-// Request body accepts:
-
-// an object in the form { inc_votes: newVote }
-
-// newVote will indicate how much the votes property in the database should be updated by
-// e.g.

@@ -4,7 +4,7 @@ const {
 	getTopics,
 	getArticleID,
 	patchArticleID,
-} = require('./controllers/news.controller');
+} = require('./controllers/article.controller');
 const {
 	psqlErrors,
 	nonPsqlErrors,
