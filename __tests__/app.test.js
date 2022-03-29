@@ -67,3 +67,86 @@ describe('GET /api/articles/:article_id', () => {
 			});
 	});
 });
+
+describe('PATCH /api/articles/:article_id', () => {
+	test('200: responds with an updated articles object', () => {
+		const voteUpdate = { inc_votes: 1 };
+		return request(app)
+			.patch('/api/articles/1')
+			.send(voteUpdate)
+			.expect(200)
+			.then(({ body }) => {
+				expect(body.article).toEqual({
+					article_id: 1,
+					title: 'Living in the shadow of a great man',
+					topic: 'mitch',
+					author: 'butter_bridge',
+					body: 'I find this existence challenging',
+					created_at: expect.any(String),
+					votes: 101,
+				});
+			});
+	});
+	test('200: responds with an updated articles object if votes deducted', () => {
+		const voteUpdate = { inc_votes: -10 };
+		return request(app)
+			.patch('/api/articles/1')
+			.send(voteUpdate)
+			.expect(200)
+			.then(({ body }) => {
+				expect(body.article).toEqual({
+					article_id: 1,
+					title: 'Living in the shadow of a great man',
+					topic: 'mitch',
+					author: 'butter_bridge',
+					body: 'I find this existence challenging',
+					created_at: expect.any(String),
+					votes: 90,
+				});
+			});
+	});
+	test('422: Responds with Unprocessable Entity message for invalid vote', () => {
+		const voteUpdate = { inc_votes: 'notInteger' };
+		return request(app)
+			.patch('/api/articles/1')
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format inc_votes: vote_number',
+				});
+			});
+	});
+	test('422: Responds with Unprocessable Entity message for format inc_votes', () => {
+		const voteUpdate = { not_inc_votes: 10 };
+		return request(app)
+			.patch('/api/articles/1')
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format inc_votes: vote_number',
+				});
+			});
+	});
+	test('404: Responds with message for valid but not recognised article ID', () => {
+		return request(app)
+			.get('/api/articles/1000')
+			.expect(404)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'Article not found' });
+			});
+	});
+	test('400: Responds with bad request message for invalid format', () => {
+		return request(app)
+			.get('/api/articles/six')
+			.expect(400)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'Bad request' });
+			});
+	});
+});
+// Request body accepts:
+
+// an object in the form { inc_votes: newVote }
+
+// newVote will indicate how much the votes property in the database should be updated by
+// e.g.

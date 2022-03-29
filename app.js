@@ -1,6 +1,10 @@
 const express = require('express');
 const format = require('pg-format');
-const { getTopics, getArticleID } = require('./controllers/news.controller');
+const {
+	getTopics,
+	getArticleID,
+	patchArticleID,
+} = require('./controllers/news.controller');
 const {
 	psqlErrors,
 	nonPsqlErrors,
@@ -13,6 +17,8 @@ app.use(express.json());
 app.get('/api/topics', getTopics);
 
 app.get('/api/articles/:article_id', getArticleID);
+
+app.patch('/api/articles/:article_id', patchArticleID);
 
 app.use(psqlErrors);
 app.use(nonPsqlErrors);
