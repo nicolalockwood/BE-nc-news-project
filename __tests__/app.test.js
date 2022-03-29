@@ -168,3 +168,33 @@ describe('GET /api/users', () => {
 			});
 	});
 });
+describe('GET /api/articles', () => {
+	test('200: responds with an array of article objects each with comment count included', () => {
+		return request(app)
+			.get('/api/articles')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.articles.length).toBe(12);
+				expect(res.body.articles).toBeInstanceOf(Array);
+				res.body.articles.forEach((article) => {
+					expect(article).toMatchObject({
+						article_id: expect.any(Number),
+						title: expect.any(String),
+						topic: expect.any(String),
+						author: expect.any(String),
+						created_at: expect.any(String),
+						votes: expect.any(Number),
+						comment_count: expect.any(String),
+					});
+				});
+			});
+	});
+	test('404: return "Path not found" error when invalid URL is passed', () => {
+		return request(app)
+			.get('/api/badpath')
+			.expect(404)
+			.then((res) => {
+				expect(res.body.msg).toEqual('Path not found');
+			});
+	});
+});
