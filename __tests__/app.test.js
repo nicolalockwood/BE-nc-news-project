@@ -110,6 +110,7 @@ describe('PATCH /api/articles/:article_id', () => {
 		const voteUpdate = { inc_votes: 'notInteger' };
 		return request(app)
 			.patch('/api/articles/1')
+			.send(voteUpdate)
 			.expect(422)
 			.then((res) => {
 				expect(res.body).toMatchObject({
@@ -121,6 +122,7 @@ describe('PATCH /api/articles/:article_id', () => {
 		const voteUpdate = { not_inc_votes: 10 };
 		return request(app)
 			.patch('/api/articles/1')
+			.send(voteUpdate)
 			.expect(422)
 			.then((res) => {
 				expect(res.body).toMatchObject({
@@ -129,16 +131,20 @@ describe('PATCH /api/articles/:article_id', () => {
 			});
 	});
 	test('404: Responds with message for valid but not recognised article ID', () => {
+		const voteUpdate = { inc_votes: 1 };
 		return request(app)
-			.get('/api/articles/1000')
+			.patch('/api/articles/1000')
+			.send(voteUpdate)
 			.expect(404)
 			.then((res) => {
 				expect(res.body).toMatchObject({ msg: 'Article not found' });
 			});
 	});
 	test('400: Responds with bad request message for invalid format', () => {
+		const voteUpdate = { inc_votes: 1 };
 		return request(app)
-			.get('/api/articles/six')
+			.patch('/api/articles/six')
+			.send(voteUpdate)
 			.expect(400)
 			.then((res) => {
 				expect(res.body).toMatchObject({ msg: 'Bad request' });
@@ -195,6 +201,101 @@ describe('GET /api/articles', () => {
 			.expect(404)
 			.then((res) => {
 				expect(res.body.msg).toEqual('Path not found');
+			});
+	});
+});
+describe('POST /api/articles/:article_id/comments', () => {
+	test('200: responds with an object of a new comment based on infomation passed from client', () => {
+		const commentUpdate = {
+			username: 'butter_bridge',
+			body: 'Test comment',
+		};
+		return request(app)
+			.post('/api/articles/9/comments')
+			.send(commentUpdate)
+			.expect(201)
+			.then((res) => {
+				expect(res.body.newComment).toBeInstanceOf(Object);
+				expect(res.body.newComment).toMatchObject({
+					comment_id: 19,
+					article_id: 9,
+					body: 'Test comment',
+					votes: 0,
+					author: 'butter_bridge',
+					created_at: expect.any(String),
+				});
+			});
+	});
+	test('422: Responds with Unprocessable Entity message for invalid body', () => {
+		const commentUpdate = {
+			username: 'butter_bridge',
+			body: 10,
+		};
+		return request(app)
+			.post('/api/articles/9/comments')
+			.send(commentUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format body: string',
+				});
+			});
+	});
+
+	test('422: Responds with Unprocessable Entity message for format body', () => {
+		const commentUpdate = {
+			username: 'butter_bridge',
+			not_body: 'Test comment',
+		};
+		return request(app)
+			.post('/api/articles/9/comments')
+			.send(commentUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format body: string',
+				});
+			});
+	});
+	test('422: Responds with Unprocessable Entity message for invalid username', () => {
+		const commentUpdate = {
+			username: 'not_current_user',
+			body: 'Test comment',
+		};
+		return request(app)
+			.post('/api/articles/9/comments')
+			.send(commentUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Username is not recognised',
+				});
+			});
+	});
+	test('404: Responds with message for valid but not recognised article ID', () => {
+		const commentUpdate = {
+			username: 'butter_bridge',
+			body: 'Test comment',
+		};
+		return request(app)
+			.post('/api/articles/1000/comments')
+			.send(commentUpdate)
+			.expect(404)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'Article not found' });
+			});
+	});
+	test('400: Responds with bad request message for invalid format', () => {
+		const commentUpdate = {
+			username: 'butter_bridge',
+			body: 'Test comment',
+		};
+		return request(app)
+			.post('/api/articles/six/comments')
+			.send(commentUpdate)
+			.expect(400)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'Bad request' });
 			});
 	});
 });

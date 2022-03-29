@@ -5,6 +5,7 @@ const {
 	byArticleID,
 	patchArticleID,
 	getArticles,
+	postCommentByID,
 } = require('./controllers/article.controller');
 const {
 	psqlErrors,
@@ -26,6 +27,8 @@ app.patch('/api/articles/:article_id', patchArticleID);
 app.get('/api/users', getUsers);
 
 app.get('/api/articles', getArticles);
+
+app.post('/api/articles/:article_id/comments', postCommentByID);
 
 app.use(psqlErrors);
 app.use(nonPsqlErrors);
