@@ -1,7 +1,7 @@
 const express = require('express');
 const format = require('pg-format');
+const { getTopics } = require('./controllers/topic.controller');
 const {
-	getTopics,
 	byArticleID,
 	patchArticleID,
 } = require('./controllers/article.controller');
