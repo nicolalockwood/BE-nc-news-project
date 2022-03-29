@@ -48,3 +48,14 @@ exports.updateArticleID = (voteUpdate, id) => {
 				});
 		});
 };
+
+exports.selectArticles = () => {
+	return db
+		.query(
+			'SELECT a.article_id, a.title, a.topic, a.author, a.created_at, a.votes, count(c.article_id) AS comment_count FROM articles a FULL OUTER JOIN comments c ON a.article_id = c.article_id GROUP BY a.article_id;'
+		)
+		.then(({ rows }) => {
+			console.log(rows);
+			return rows;
+		});
+};
