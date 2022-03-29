@@ -4,7 +4,10 @@ const format = require('pg-format');
 
 exports.selectArticleID = (article_id) => {
 	return db
-		.query('SELECT * FROM articles WHERE article_id = $1;', [article_id])
+		.query(
+			'SELECT a.article_id, a.title, a.topic, a.author, a.body, a.created_at, a.votes, count(c.article_id) FROM articles a INNER JOIN comments c ON a.article_id = c.article_id WHERE a.article_id = $1 GROUP BY a.article_id;',
+			[article_id]
+		)
 		.then(({ rows }) => {
 			if (rows.length === 0) {
 				return Promise.reject({ msg: 'Article not found', status: 404 });
