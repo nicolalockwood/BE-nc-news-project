@@ -47,7 +47,24 @@ describe('GET /api/articles/:article_id', () => {
 					body: 'I find this existence challenging',
 					created_at: expect.any(String),
 					votes: 100,
-					count: '11',
+					comment_count: '11',
+				});
+			});
+	});
+	test('200: responds with an articles object, even if comment_count is 0', () => {
+		return request(app)
+			.get('/api/articles/4')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.article).toEqual({
+					article_id: 4,
+					title: 'Student SUES Mitch!',
+					topic: 'mitch',
+					author: 'rogersop',
+					body: expect.any(String),
+					created_at: expect.any(String),
+					votes: 0,
+					comment_count: '0',
 				});
 			});
 	});
@@ -195,6 +212,53 @@ describe('GET /api/articles', () => {
 			.expect(404)
 			.then((res) => {
 				expect(res.body.msg).toEqual('Path not found');
+			});
+	});
+});
+
+describe('GET /api/articles/:article_id/comments', () => {
+	test('200: responds with an array of comments in objects for the article ID  passed', () => {
+		return request(app)
+			.get('/api/articles/9/comments')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.commentData).toBeInstanceOf(Array);
+				expect(res.body.commentData.length).toBe(2);
+				res.body.commentData.forEach((user) => {
+					expect(user).toMatchObject({
+						comment_id: expect.any(Number),
+						votes: expect.any(Number),
+						body: expect.any(String),
+						created_at: expect.any(String),
+						author: expect.any(String),
+					});
+				});
+			});
+	});
+	test('200: Responds with an empty array for valid article ID that has no comments', () => {
+		return request(app)
+			.get('/api/articles/4/comments')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.commentData).toBeInstanceOf(Array);
+				expect(res.body.commentData).toEqual([]);
+			});
+	});
+
+	test('404: Responds with message for valid but not recognised article ID', () => {
+		return request(app)
+			.get('/api/articles/1000/comments')
+			.expect(404)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'Article not found' });
+			});
+	});
+	test('400: Responds with bad request message for invalid format', () => {
+		return request(app)
+			.get('/api/articles/six/comments')
+			.expect(400)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'Bad request' });
 			});
 	});
 });
