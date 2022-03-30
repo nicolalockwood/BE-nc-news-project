@@ -5,7 +5,7 @@ const format = require('pg-format');
 exports.selectArticleID = (article_id) => {
 	return db
 		.query(
-			'SELECT a.article_id, a.title, a.topic, a.author, a.body, a.created_at, a.votes, count(c.article_id) FROM articles a INNER JOIN comments c ON a.article_id = c.article_id WHERE a.article_id = $1 GROUP BY a.article_id;',
+			'SELECT a.*, count(c.article_id) AS comment_count FROM articles a FULL OUTER JOIN comments c ON a.article_id = c.article_id WHERE a.article_id = $1 GROUP BY a.article_id;',
 			[article_id]
 		)
 		.then(({ rows }) => {
@@ -53,7 +53,18 @@ exports.updateArticleID = (voteUpdate, id) => {
 exports.selectArticles = () => {
 	return db
 		.query(
-			'SELECT a.article_id, a.title, a.topic, a.author, a.created_at, a.votes, count(c.article_id) AS comment_count FROM articles a FULL OUTER JOIN comments c ON a.article_id = c.article_id GROUP BY a.article_id;'
+			'SELECT a.*, count(c.article_id) AS comment_count FROM articles a FULL OUTER JOIN comments c ON a.article_id = c.article_id GROUP BY a.article_id;'
+		)
+		.then(({ rows }) => {
+			return rows;
+		});
+};
+
+exports.selectCommentsByArticleID = (id) => {
+	return db
+		.query(
+			'SELECT comment_id, body, author, votes, created_at FROM comments WHERE article_id = $1;',
+			[id]
 		)
 		.then(({ rows }) => {
 			return rows;

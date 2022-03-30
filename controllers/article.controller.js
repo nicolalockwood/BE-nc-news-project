@@ -4,6 +4,7 @@ const {
 	updateArticleID,
 	selectArticles,
 	sendCommentByID,
+	selectCommentsByArticleID,
 } = require('../models/article.model');
 
 exports.byArticleID = (req, res, next) => {
@@ -40,6 +41,18 @@ exports.postCommentByID = (req, res, next) => {
 		.then((results) => {
 			const newComment = results[1];
 			res.status(201).send({ newComment });
+		})
+		.catch((err) => next(err));
+};
+
+exports.commentsByArticleID = (req, res, next) => {
+	const { article_id } = req.params;
+	const promises = [selectArticleID(article_id)];
+	if (article_id) promises.push(selectCommentsByArticleID(article_id));
+	Promise.all(promises)
+		.then((results) => {
+			const commentData = results[1];
+			res.status(200).send({ commentData });
 		})
 		.catch((err) => next(err));
 };

@@ -23,6 +23,8 @@ describe('GET /api/topics', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING- GET /api/topics', () => {
 	test('404: return "Path not found" error when invalid URL is passed', () => {
 		return request(app)
 			.get('/api/badpath')
@@ -47,10 +49,29 @@ describe('GET /api/articles/:article_id', () => {
 					body: 'I find this existence challenging',
 					created_at: expect.any(String),
 					votes: 100,
-					count: '11',
+					comment_count: '11',
 				});
 			});
 	});
+	test('200: responds with an articles object, even if comment_count is 0', () => {
+		return request(app)
+			.get('/api/articles/4')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.article).toEqual({
+					article_id: 4,
+					title: 'Student SUES Mitch!',
+					topic: 'mitch',
+					author: 'rogersop',
+					body: expect.any(String),
+					created_at: expect.any(String),
+					votes: 0,
+					comment_count: '0',
+				});
+			});
+	});
+});
+describe(' ERROR HANDLING- GET /api/articles/:article_id', () => {
 	test('404: Responds with message for valid but not recognised article ID', () => {
 		return request(app)
 			.get('/api/articles/1000')
@@ -106,6 +127,8 @@ describe('PATCH /api/articles/:article_id', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING-PATCH /api/articles/:article_id', () => {
 	test('422: Responds with Unprocessable Entity message for invalid vote', () => {
 		const voteUpdate = { inc_votes: 'notInteger' };
 		return request(app)
@@ -165,6 +188,8 @@ describe('GET /api/users', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING -GET /api/users', () => {
 	test('404: return "Path not found" error when invalid URL is passed', () => {
 		return request(app)
 			.get('/api/badpath')
@@ -195,6 +220,8 @@ describe('GET /api/articles', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING - GET /api/articles', () => {
 	test('404: return "Path not found" error when invalid URL is passed', () => {
 		return request(app)
 			.get('/api/badpath')
@@ -285,14 +312,49 @@ describe('POST /api/articles/:article_id/comments', () => {
 				expect(res.body).toMatchObject({ msg: 'Article not found' });
 			});
 	});
-	test('400: Responds with bad request message for invalid format', () => {
-		const commentUpdate = {
-			username: 'butter_bridge',
-			body: 'Test comment',
-		};
+});
+
+describe('GET /api/articles/:article_id/comments', () => {
+	test('200: responds with an array of comments in objects for the article ID  passed', () => {
 		return request(app)
-			.post('/api/articles/six/comments')
-			.send(commentUpdate)
+			.get('/api/articles/9/comments')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.commentData).toBeInstanceOf(Array);
+				expect(res.body.commentData.length).toBe(2);
+				res.body.commentData.forEach((user) => {
+					expect(user).toMatchObject({
+						comment_id: expect.any(Number),
+						votes: expect.any(Number),
+						body: expect.any(String),
+						created_at: expect.any(String),
+						author: expect.any(String),
+					});
+				});
+			});
+	});
+	test('200: Responds with an empty array for valid article ID that has no comments', () => {
+		return request(app)
+			.get('/api/articles/4/comments')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.commentData).toBeInstanceOf(Array);
+				expect(res.body.commentData).toEqual([]);
+			});
+	});
+});
+describe('ERROR HANDLING - GET /api/articles/:article_id/comments', () => {
+	test('404: Responds with message for valid but not recognised article ID', () => {
+		return request(app)
+			.get('/api/articles/1000/comments')
+			.expect(404)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'Article not found' });
+			});
+	});
+	test('400: Responds with bad request message for invalid format', () => {
+		return request(app)
+			.get('/api/articles/six/comments')
 			.expect(400)
 			.then((res) => {
 				expect(res.body).toMatchObject({ msg: 'Bad request' });
