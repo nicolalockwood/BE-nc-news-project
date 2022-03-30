@@ -3,7 +3,7 @@ const db = require('../db/connection');
 const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
 const app = require('../app');
-// const jestSorted = require('jest-sorted');
+const jestSorted = require('jest-sorted');
 
 afterAll(() => db.end());
 beforeEach(() => seed(testData));
@@ -200,11 +200,15 @@ describe('ERROR HANDLING -GET /api/users', () => {
 	});
 });
 describe('GET /api/articles', () => {
-	test('200: responds with an array of article objects each with comment count included', () => {
+	test('200: responds with an array of article objects each with comment count included sorted by date DESC', () => {
 		return request(app)
 			.get('/api/articles')
 			.expect(200)
 			.then((res) => {
+				expect(res.body.articles).toBeSortedBy('created_at', {
+					descending: true,
+					coerce: true,
+				});
 				expect(res.body.articles.length).toBe(12);
 				expect(res.body.articles).toBeInstanceOf(Array);
 				res.body.articles.forEach((article) => {
@@ -231,6 +235,66 @@ describe('ERROR HANDLING - GET /api/articles', () => {
 			});
 	});
 });
+describe('GET /api/articles - QUERIES', () => {
+	test('200: Accepts a sort-by query and sorts based on input', () => {
+		return request(app)
+			.get('/api/articles/?sort_by=votes')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.articles).toBeSortedBy('votes', {
+					descending: true,
+					coerce: true,
+				});
+			});
+	});
+	test('200: Accepts a order query and sorts based on input', () => {
+		return request(app)
+			.get('/api/articles/?order=asc')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.articles).toBeSortedBy('created_at', {
+					coerce: true,
+				});
+			});
+	});
+	test('200: Accepts a topic query and filters based on input', () => {
+		return request(app)
+			.get('/api/articles/?topic=cats')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.articles.length).toBe(1);
+				res.body.articles.forEach((article) => {
+					expect(article.topic).toBe('cats');
+				});
+			});
+	});
+});
+describe('ERROR HANDLING - GET /api/articles - QUERIES', () => {
+	test('400: return "Invalid sort by" error when invalid sort by value is passed', () => {
+		return request(app)
+			.get('/api/articles?sort_by=incorrect')
+			.expect(400)
+			.then((res) => {
+				expect(res.body.msg).toBe('Invalid sort by');
+			});
+	});
+	test('400: return "Invalid order by" error when invalid order value is passed', () => {
+		return request(app)
+			.get('/api/articles?order=incorrect')
+			.expect(400)
+			.then((res) => {
+				expect(res.body.msg).toBe('Invalid order by');
+			});
+	});
+	test('400: return "Invalid query parameter" error when invalid topic value is passed', () => {
+		return request(app)
+			.get('/api/articles?topic=incorrect')
+			.expect(400)
+			.then((res) => {
+				expect(res.body.msg).toBe('Invalid query parameter');
+			});
+	});
+});
 describe('POST /api/articles/:article_id/comments', () => {
 	test('200: responds with an object of a new comment based on infomation passed from client', () => {
 		const commentUpdate = {
@@ -253,6 +317,8 @@ describe('POST /api/articles/:article_id/comments', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING - POST /api/articles/:article_id/comments', () => {
 	test('422: Responds with Unprocessable Entity message for invalid body', () => {
 		const commentUpdate = {
 			username: 'butter_bridge',
