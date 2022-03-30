@@ -427,3 +427,24 @@ describe('ERROR HANDLING - GET /api/articles/:article_id/comments', () => {
 			});
 	});
 });
+
+describe('GET /api', () => {
+	test('200: Response with a JSON object of a list of endpoints', () => {
+		return request(app)
+			.get('/api')
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeInstanceOf(Object);
+			});
+	});
+});
+describe('ERROR HANDLING - GET /api', () => {
+	test('404: return "Path not found" error when invalid URL is passed', () => {
+		return request(app)
+			.get('/badpath')
+			.expect(404)
+			.then((res) => {
+				expect(res.body.msg).toEqual('Path not found');
+			});
+	});
+});
