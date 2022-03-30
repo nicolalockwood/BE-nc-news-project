@@ -28,6 +28,12 @@ exports.updateArticleID = (voteUpdate, id) => {
 	return db
 		.query('SELECT votes FROM articles WHERE article_id = $1 ;', [id])
 		.then(({ rows }) => {
+			if (rows.length === 0) {
+				return Promise.reject({
+					status: 404,
+					msg: 'Article not found',
+				});
+			}
 			let currentVote = rows[0].votes;
 			let newVote = (currentVote += voteUpdateAmmount);
 			return newVote;
@@ -93,5 +99,34 @@ exports.selectCommentsByArticleID = (id) => {
 		)
 		.then(({ rows }) => {
 			return rows;
+		});
+};
+exports.sendCommentByID = (newBody, ID) => {
+	const { username, body } = newBody;
+	const validUserNames = [
+		'butter_bridge',
+		'icellusedkars',
+		'rogersop ',
+		'lurker ',
+	];
+	if (!validUserNames.includes(username)) {
+		return Promise.reject({
+			status: 422,
+			msg: 'Unprocessable Entity- Username is not recognised',
+		});
+	}
+	if (typeof body !== 'string') {
+		return Promise.reject({
+			status: 422,
+			msg: 'Unprocessable Entity- Please provide in format body: string',
+		});
+	}
+	return db
+		.query(
+			'INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING *;',
+			[ID, username, body]
+		)
+		.then(({ rows }) => {
+			return rows[0];
 		});
 };

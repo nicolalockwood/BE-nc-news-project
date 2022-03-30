@@ -3,6 +3,7 @@ const {
 	selectArticleID,
 	updateArticleID,
 	selectArticles,
+	sendCommentByID,
 	selectCommentsByArticleID,
 } = require('../models/article.model');
 
@@ -29,6 +30,18 @@ exports.getArticles = (req, res, next) => {
 	selectArticles(sort_by, order, topic)
 		.then((articles) => {
 			res.status(200).send({ articles });
+		})
+		.catch((err) => next(err));
+};
+
+exports.postCommentByID = (req, res, next) => {
+	const { article_id } = req.params;
+	const promises = [selectArticleID(article_id)];
+	if (article_id) promises.push(sendCommentByID(req.body, article_id));
+	Promise.all(promises)
+		.then((results) => {
+			const newComment = results[1];
+			res.status(201).send({ newComment });
 		})
 		.catch((err) => next(err));
 };

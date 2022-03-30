@@ -23,6 +23,8 @@ describe('GET /api/topics', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING- GET /api/topics', () => {
 	test('404: return "Path not found" error when invalid URL is passed', () => {
 		return request(app)
 			.get('/api/badpath')
@@ -68,6 +70,8 @@ describe('GET /api/articles/:article_id', () => {
 				});
 			});
 	});
+});
+describe(' ERROR HANDLING- GET /api/articles/:article_id', () => {
 	test('404: Responds with message for valid but not recognised article ID', () => {
 		return request(app)
 			.get('/api/articles/1000')
@@ -123,10 +127,13 @@ describe('PATCH /api/articles/:article_id', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING-PATCH /api/articles/:article_id', () => {
 	test('422: Responds with Unprocessable Entity message for invalid vote', () => {
 		const voteUpdate = { inc_votes: 'notInteger' };
 		return request(app)
 			.patch('/api/articles/1')
+			.send(voteUpdate)
 			.expect(422)
 			.then((res) => {
 				expect(res.body).toMatchObject({
@@ -138,6 +145,7 @@ describe('PATCH /api/articles/:article_id', () => {
 		const voteUpdate = { not_inc_votes: 10 };
 		return request(app)
 			.patch('/api/articles/1')
+			.send(voteUpdate)
 			.expect(422)
 			.then((res) => {
 				expect(res.body).toMatchObject({
@@ -146,16 +154,20 @@ describe('PATCH /api/articles/:article_id', () => {
 			});
 	});
 	test('404: Responds with message for valid but not recognised article ID', () => {
+		const voteUpdate = { inc_votes: 1 };
 		return request(app)
-			.get('/api/articles/1000')
+			.patch('/api/articles/1000')
+			.send(voteUpdate)
 			.expect(404)
 			.then((res) => {
 				expect(res.body).toMatchObject({ msg: 'Article not found' });
 			});
 	});
 	test('400: Responds with bad request message for invalid format', () => {
+		const voteUpdate = { inc_votes: 1 };
 		return request(app)
-			.get('/api/articles/six')
+			.patch('/api/articles/six')
+			.send(voteUpdate)
 			.expect(400)
 			.then((res) => {
 				expect(res.body).toMatchObject({ msg: 'Bad request' });
@@ -176,6 +188,8 @@ describe('GET /api/users', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING -GET /api/users', () => {
 	test('404: return "Path not found" error when invalid URL is passed', () => {
 		return request(app)
 			.get('/api/badpath')
@@ -210,6 +224,8 @@ describe('GET /api/articles', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING - GET /api/articles', () => {
 	test('404: return "Path not found" error when invalid URL is passed', () => {
 		return request(app)
 			.get('/api/badpath')
@@ -231,14 +247,6 @@ describe('GET /api/articles - QUERIES', () => {
 				});
 			});
 	});
-	test('400: return "Invalid sort by" error when invalid sort by value is passed', () => {
-		return request(app)
-			.get('/api/articles?sort_by=incorrect')
-			.expect(400)
-			.then((res) => {
-				expect(res.body.msg).toBe('Invalid sort by');
-			});
-	});
 	test('200: Accepts a order query and sorts based on input', () => {
 		return request(app)
 			.get('/api/articles/?order=asc')
@@ -247,14 +255,6 @@ describe('GET /api/articles - QUERIES', () => {
 				expect(res.body.articles).toBeSortedBy('created_at', {
 					coerce: true,
 				});
-			});
-	});
-	test('400: return "Invalid order by" error when invalid order value is passed', () => {
-		return request(app)
-			.get('/api/articles?order=incorrect')
-			.expect(400)
-			.then((res) => {
-				expect(res.body.msg).toBe('Invalid order by');
 			});
 	});
 	test('200: Accepts a topic query and filters based on input', () => {
@@ -268,12 +268,114 @@ describe('GET /api/articles - QUERIES', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING - GET /api/articles - QUERIES', () => {
+	test('400: return "Invalid sort by" error when invalid sort by value is passed', () => {
+		return request(app)
+			.get('/api/articles?sort_by=incorrect')
+			.expect(400)
+			.then((res) => {
+				expect(res.body.msg).toBe('Invalid sort by');
+			});
+	});
+	test('400: return "Invalid order by" error when invalid order value is passed', () => {
+		return request(app)
+			.get('/api/articles?order=incorrect')
+			.expect(400)
+			.then((res) => {
+				expect(res.body.msg).toBe('Invalid order by');
+			});
+	});
 	test('400: return "Invalid query parameter" error when invalid topic value is passed', () => {
 		return request(app)
 			.get('/api/articles?topic=incorrect')
 			.expect(400)
 			.then((res) => {
 				expect(res.body.msg).toBe('Invalid query parameter');
+			});
+	});
+});
+describe('POST /api/articles/:article_id/comments', () => {
+	test('200: responds with an object of a new comment based on infomation passed from client', () => {
+		const commentUpdate = {
+			username: 'butter_bridge',
+			body: 'Test comment',
+		};
+		return request(app)
+			.post('/api/articles/9/comments')
+			.send(commentUpdate)
+			.expect(201)
+			.then((res) => {
+				expect(res.body.newComment).toBeInstanceOf(Object);
+				expect(res.body.newComment).toMatchObject({
+					comment_id: 19,
+					article_id: 9,
+					body: 'Test comment',
+					votes: 0,
+					author: 'butter_bridge',
+					created_at: expect.any(String),
+				});
+			});
+	});
+});
+describe('ERROR HANDLING - POST /api/articles/:article_id/comments', () => {
+	test('422: Responds with Unprocessable Entity message for invalid body', () => {
+		const commentUpdate = {
+			username: 'butter_bridge',
+			body: 10,
+		};
+		return request(app)
+			.post('/api/articles/9/comments')
+			.send(commentUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format body: string',
+				});
+			});
+	});
+
+	test('422: Responds with Unprocessable Entity message for format body', () => {
+		const commentUpdate = {
+			username: 'butter_bridge',
+			not_body: 'Test comment',
+		};
+		return request(app)
+			.post('/api/articles/9/comments')
+			.send(commentUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format body: string',
+				});
+			});
+	});
+	test('422: Responds with Unprocessable Entity message for invalid username', () => {
+		const commentUpdate = {
+			username: 'not_current_user',
+			body: 'Test comment',
+		};
+		return request(app)
+			.post('/api/articles/9/comments')
+			.send(commentUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Username is not recognised',
+				});
+			});
+	});
+	test('404: Responds with message for valid but not recognised article ID', () => {
+		const commentUpdate = {
+			username: 'butter_bridge',
+			body: 'Test comment',
+		};
+		return request(app)
+			.post('/api/articles/1000/comments')
+			.send(commentUpdate)
+			.expect(404)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'Article not found' });
 			});
 	});
 });
@@ -306,7 +408,8 @@ describe('GET /api/articles/:article_id/comments', () => {
 				expect(res.body.commentData).toEqual([]);
 			});
 	});
-
+});
+describe('ERROR HANDLING - GET /api/articles/:article_id/comments', () => {
 	test('404: Responds with message for valid but not recognised article ID', () => {
 		return request(app)
 			.get('/api/articles/1000/comments')
