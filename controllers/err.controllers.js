@@ -15,6 +15,7 @@ exports.nonPsqlErrors = (err, req, res, next) => {
 		next(err);
 	}
 };
+
 //handle unexpected error
 exports.internalServerError = (err, req, res, next) => {
 	console.log(err);
