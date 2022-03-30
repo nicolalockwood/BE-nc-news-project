@@ -44,14 +44,45 @@ exports.updateArticleID = (voteUpdate, id) => {
 		});
 };
 
-exports.selectArticles = () => {
-	return db
-		.query(
-			'SELECT a.*, count(c.article_id) AS comment_count FROM articles a FULL OUTER JOIN comments c ON a.article_id = c.article_id GROUP BY a.article_id;'
-		)
-		.then(({ rows }) => {
-			return rows;
-		});
+exports.selectArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
+	const validColumns = [
+		'comment_count',
+		'article_id',
+		'title',
+		'topic',
+		'author',
+		'body',
+		'created_at',
+		'votes',
+	];
+
+	const validSort = ['ASC', 'DESC', 'asc', 'desc'];
+
+	const validTopic = ['mitch', 'cats'];
+	if (!validSort.includes(order)) {
+		return Promise.reject({ status: 400, msg: 'Invalid order by' });
+	}
+
+	if (!validColumns.includes(sort_by)) {
+		return Promise.reject({ status: 400, msg: 'Invalid sort by' });
+	}
+	if (topic && !validTopic.includes(topic)) {
+		return Promise.reject({ status: 400, msg: 'Invalid query parameter' });
+	}
+
+	let queryStr =
+		'SELECT a.*, count(c.article_id) AS comment_count FROM articles a FULL OUTER JOIN comments c ON a.article_id = c.article_id';
+	let queryValues = [];
+
+	if (topic) {
+		queryStr += ` WHERE topic = $1`;
+		queryValues.push(topic);
+	}
+
+	queryStr += ` GROUP BY a.article_id ORDER BY ${sort_by} ${order};`;
+	return db.query(queryStr, queryValues).then(({ rows }) => {
+		return rows;
+	});
 };
 
 exports.selectCommentsByArticleID = (id) => {
