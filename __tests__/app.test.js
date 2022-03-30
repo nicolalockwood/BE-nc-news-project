@@ -289,9 +289,9 @@ describe('ERROR HANDLING - GET /api/articles - QUERIES', () => {
 	test('400: return "Invalid query parameter" error when invalid topic value is passed', () => {
 		return request(app)
 			.get('/api/articles?topic=incorrect')
-			.expect(400)
+			.expect(404)
 			.then((res) => {
-				expect(res.body.msg).toBe('Invalid query parameter');
+				expect(res.body.msg).toBe('Topic not found');
 			});
 	});
 });

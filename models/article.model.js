@@ -73,7 +73,7 @@ exports.selectArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
 		return Promise.reject({ status: 400, msg: 'Invalid sort by' });
 	}
 	if (topic && !validTopic.includes(topic)) {
-		return Promise.reject({ status: 400, msg: 'Invalid query parameter' });
+		return Promise.reject({ status: 404, msg: 'Topic not found' });
 	}
 
 	let queryStr =
