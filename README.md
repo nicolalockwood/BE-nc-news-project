@@ -9,23 +9,43 @@ Please start by cloning this repo.
 - Fork repo, and copy code URL.
 - In VS code run command 'git clone url'
 
-Then install dependencies.
+# ----Set up infomation----
 
-- Run NPM init followed by NPM install. This will download dependencies from package.JSON.
-  Required items are:
-  -postgres
-  -husky
-  -express
-  -jest
-  -jest-extended
-  -jest-sorted
-  pg-format
-  supertest
-  dotenv
-  pg
+- Run NPM install. This will download dependencies from package.JSON.
 
-----ENV----
-Please create enviroment variables to be able to clone and locally run this file succesfully. Please create the following files:
+-Run NPM setup-dbs. This will initialise the data base ready to be populated
+
+-Run NPM seed. This will seed the newly set up database with values and data.
+
+-Run NPM test. This is will enable testing suite to run.
+
+# ----Dependencies used----
+
+These will be insatlled from package.JSON, but are here in list form for reference:
+
+-postgres
+-husky
+-express
+-jest
+-jest-extended
+-jest-sorted
+-pg-format
+-supertest
+-dotenv
+-fs
+
+# ----Minimum Versions ----
+
+Please run with a minimum of the following version types:
+
+npm: '8.3.1',
+node: '16.14.0',
+v8: '9.4.146.24-node.20',
+pg: '^8.7.3'
+
+# ----ENV----
+
+Please create enviroment variables to be able to clone and locally run this file succesfully. Please create the following files and double check they are succesfully in git ignore:
 
 - .env.test - In the body of this file please add PGDATABASE=nc_news_test
   -.env.development - In the body of this file please add PGDATABASE=nc_news
