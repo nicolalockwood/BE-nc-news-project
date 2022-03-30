@@ -23,6 +23,8 @@ describe('GET /api/topics', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING- GET /api/topics', () => {
 	test('404: return "Path not found" error when invalid URL is passed', () => {
 		return request(app)
 			.get('/api/badpath')
@@ -68,6 +70,8 @@ describe('GET /api/articles/:article_id', () => {
 				});
 			});
 	});
+});
+describe(' ERROR HANDLING- GET /api/articles/:article_id', () => {
 	test('404: Responds with message for valid but not recognised article ID', () => {
 		return request(app)
 			.get('/api/articles/1000')
@@ -123,6 +127,8 @@ describe('PATCH /api/articles/:article_id', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING-PATCH /api/articles/:article_id', () => {
 	test('422: Responds with Unprocessable Entity message for invalid vote', () => {
 		const voteUpdate = { inc_votes: 'notInteger' };
 		return request(app)
@@ -176,6 +182,8 @@ describe('GET /api/users', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING -GET /api/users', () => {
 	test('404: return "Path not found" error when invalid URL is passed', () => {
 		return request(app)
 			.get('/api/badpath')
@@ -206,6 +214,8 @@ describe('GET /api/articles', () => {
 				});
 			});
 	});
+});
+describe('ERROR HANDLING - GET /api/articles', () => {
 	test('404: return "Path not found" error when invalid URL is passed', () => {
 		return request(app)
 			.get('/api/badpath')
@@ -244,7 +254,8 @@ describe('GET /api/articles/:article_id/comments', () => {
 				expect(res.body.commentData).toEqual([]);
 			});
 	});
-
+});
+describe('ERROR HANDLING - GET /api/articles/:article_id/comments', () => {
 	test('404: Responds with message for valid but not recognised article ID', () => {
 		return request(app)
 			.get('/api/articles/1000/comments')
