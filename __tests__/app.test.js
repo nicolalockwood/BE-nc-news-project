@@ -504,3 +504,85 @@ describe(' ERROR HANDLING- GET /api/users/:username', () => {
 			});
 	});
 });
+describe('PATCH api/comments/:comment_id', () => {
+	test('200: responds with an updated comment object', () => {
+		const voteUpdate = { inc_votes: 1 };
+		return request(app)
+			.patch('/api/comments/1')
+			.send(voteUpdate)
+			.expect(200)
+			.then(({ body }) => {
+				expect(body.comment).toEqual({
+					comment_id: 1,
+					body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+					votes: 17,
+					author: 'butter_bridge',
+					article_id: 9,
+					created_at: expect.any(String),
+				});
+			});
+	});
+	test('200: responds with an updated articles object if votes deducted', () => {
+		const voteUpdate = { inc_votes: -10 };
+		return request(app)
+			.patch('/api/comments/1')
+			.send(voteUpdate)
+			.expect(200)
+			.then(({ body }) => {
+				expect(body.comment).toEqual({
+					comment_id: 1,
+					body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+					votes: 6,
+					author: 'butter_bridge',
+					article_id: 9,
+					created_at: expect.any(String),
+				});
+			});
+	});
+});
+describe('ERROR HANDLING-PATCH api/comments/:comment_id', () => {
+	test('422: Responds with Unprocessable Entity message for invalid vote', () => {
+		const voteUpdate = { inc_votes: 'notInteger' };
+		return request(app)
+			.patch('/api/comments/1')
+			.send(voteUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format inc_votes: vote_number',
+				});
+			});
+	});
+	test('422: Responds with Unprocessable Entity message for format inc_votes', () => {
+		const voteUpdate = { not_inc_votes: 10 };
+		return request(app)
+			.patch('/api/comments/1')
+			.send(voteUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format inc_votes: vote_number',
+				});
+			});
+	});
+	test('404: Responds with message for valid but not recognised article ID', () => {
+		const voteUpdate = { inc_votes: 1 };
+		return request(app)
+			.patch('/api/comments/1000')
+			.send(voteUpdate)
+			.expect(404)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'Article not found' });
+			});
+	});
+	test('400: Responds with bad request message for invalid format', () => {
+		const voteUpdate = { inc_votes: 1 };
+		return request(app)
+			.patch('/api/comments/six')
+			.send(voteUpdate)
+			.expect(400)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'Bad request' });
+			});
+	});
+});
