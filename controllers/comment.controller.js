@@ -1,5 +1,4 @@
 const { removeCommentByID } = require('../models/comment.model');
-const { commentByID } = require('../db/helpers/utils');
 
 exports.deleteCommentByID = (req, res, next) => {
 	const { comment_id } = req.params;
