@@ -751,3 +751,86 @@ describe('ERROR HANDLING - POST /api/articles', () => {
 			});
 	});
 });
+describe('POST /api/topics', () => {
+	test('201: responds with an object of a new topic based on infomation passed from client', () => {
+		const topicUpdate = {
+			slug: 'topic name here',
+			description: 'description here',
+		};
+		return request(app)
+			.post('/api/topics')
+			.send(topicUpdate)
+			.expect(201)
+			.then((res) => {
+				expect(res.body.newTopic).toBeInstanceOf(Object);
+				expect(res.body.newTopic).toMatchObject({
+					slug: 'topic name here',
+					description: 'description here',
+				});
+			});
+	});
+});
+describe('ERROR HANDLING - POST /api/topics', () => {
+	test('422: Responds with Unprocessable Entity message for invalid slug value', () => {
+		const topicUpdate = {
+			slug: 1000,
+			description: 'description here',
+		};
+		return request(app)
+			.post('/api/topics')
+			.send(topicUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format slug: string',
+				});
+			});
+	});
+
+	test('422: Responds with Unprocessable Entity message for format slug key', () => {
+		const topicUpdate = {
+			not_slug: 'topic name here',
+			description: 'description here',
+		};
+		return request(app)
+			.post('/api/topics')
+			.send(topicUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format slug: string',
+				});
+			});
+	});
+	test('422: Responds with Unprocessable Entity message for invalid description value', () => {
+		const topicUpdate = {
+			slug: 'topic name here',
+			description: 10000,
+		};
+		return request(app)
+			.post('/api/topics')
+			.send(topicUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format description: string',
+				});
+			});
+	});
+
+	test('422: Responds with Unprocessable Entity message for format description key', () => {
+		const topicUpdate = {
+			slug: 'topic name here',
+			not_description: 'description here',
+		};
+		return request(app)
+			.post('/api/topics')
+			.send(topicUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format description: string',
+				});
+			});
+	});
+});
