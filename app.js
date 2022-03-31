@@ -1,5 +1,4 @@
 const express = require('express');
-const format = require('pg-format');
 const apiRouter = require('./routes/api-router');
 const app = express();
 
