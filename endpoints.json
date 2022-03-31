@@ -128,5 +128,14 @@
 		"description": "To give error message if path not found for invalid URL passed. ",
 		"queries": [],
 		"exampleResponse": { "msg": "Path not found" }
+	},
+	"GET /api/users/:username": {
+		"description": "Serves an object of a user, which is related to the appropriate username",
+		"queries": [],
+		"exampleResponse": {
+			"username": "butter_bridge",
+			"name": "jonny",
+			"avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+		}
 	}
 }
