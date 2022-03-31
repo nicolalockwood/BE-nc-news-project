@@ -16,6 +16,8 @@ const {
 
 const { getUsers } = require('./controllers/user.controller');
 
+const { deleteCommentByID } = require('./controllers/comment.controller');
+
 const app = express();
 app.use(express.json());
 
@@ -32,6 +34,8 @@ app.get('/api/articles', getArticles);
 app.post('/api/articles/:article_id/comments', postCommentByID);
 app.get('/api/articles/:article_id/comments', commentsByArticleID);
 
+app.delete('/api/comments/:comment_id', deleteCommentByID);
+
 app.use(psqlErrors);
 app.use(nonPsqlErrors);
 app.use(internalServerError);
@@ -39,5 +43,4 @@ app.use(internalServerError);
 app.all('/*', (req, res) => {
 	res.status(404).send({ msg: 'Path not found' });
 });
-
 module.exports = app;
