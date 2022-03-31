@@ -8,9 +8,10 @@ const {
 	getArticles,
 	postCommentByID,
 	commentsByArticleID,
+	postArticles,
 } = require('../controllers/article.controller');
 
-articleRouter.route('/').get(getArticles);
+articleRouter.route('/').get(getArticles).post(postArticles);
 
 articleRouter.route('/:article_id').get(byArticleID).patch(patchArticleID);
 

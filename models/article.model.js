@@ -1,6 +1,8 @@
 const { query } = require('../db/connection');
 const db = require('../db/connection');
 const format = require('pg-format');
+const { selectTopics } = require('../models/topic.model');
+const { selectUsers } = require('../models/user.model');
 
 exports.selectArticleID = (article_id) => {
 	return db
@@ -125,6 +127,50 @@ exports.sendCommentByID = (newBody, ID) => {
 		.query(
 			'INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING *;',
 			[ID, username, body]
+		)
+		.then(({ rows }) => {
+			return rows[0];
+		});
+};
+
+exports.sendArticles = (newBody) => {
+	const { title, topic, author, body } = newBody;
+	const validUserNames = [
+		'butter_bridge',
+		'icellusedkars',
+		'rogersop ',
+		'lurker ',
+	];
+	const validTopic = ['mitch', 'cats', 'paper'];
+
+	if (typeof title !== 'string') {
+		return Promise.reject({
+			status: 422,
+			msg: 'Unprocessable Entity- Please provide in format title: string',
+		});
+	}
+	if (!validTopic.includes(topic)) {
+		return Promise.reject({
+			status: 422,
+			msg: 'Unprocessable Entity- Topic is not recognised please add and re try in format topic: topicname',
+		});
+	}
+	if (!validUserNames.includes(author)) {
+		return Promise.reject({
+			status: 422,
+			msg: 'Unprocessable Entity- Username is not recognised please enter username:yourusername',
+		});
+	}
+	if (typeof body !== 'string') {
+		return Promise.reject({
+			status: 422,
+			msg: 'Unprocessable Entity- Please provide in format body: string',
+		});
+	}
+	return db
+		.query(
+			'INSERT INTO articles (title, topic, author, body) VALUES ($1, $2, $3, $4) RETURNING *;',
+			[title, topic, author, body]
 		)
 		.then(({ rows }) => {
 			return rows[0];

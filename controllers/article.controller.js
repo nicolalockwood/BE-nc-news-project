@@ -5,6 +5,7 @@ const {
 	selectArticles,
 	sendCommentByID,
 	selectCommentsByArticleID,
+	sendArticles,
 } = require('../models/article.model');
 
 exports.byArticleID = (req, res, next) => {
@@ -54,6 +55,14 @@ exports.commentsByArticleID = (req, res, next) => {
 		.then((results) => {
 			const commentData = results[1];
 			res.status(200).send({ commentData });
+		})
+		.catch((err) => next(err));
+};
+
+exports.postArticles = (req, res, next) => {
+	sendArticles(req.body)
+		.then((newArticle) => {
+			res.status(201).send({ newArticle });
 		})
 		.catch((err) => next(err));
 };

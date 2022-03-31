@@ -586,3 +586,168 @@ describe('ERROR HANDLING-PATCH api/comments/:comment_id', () => {
 			});
 	});
 });
+describe('POST /api/articles', () => {
+	test('201: responds with an object of a new article based on infomation passed from client', () => {
+		const articleUpdate = {
+			title: 'This project has been fun',
+			topic: 'cats',
+			author: 'butter_bridge',
+			body: 'Why is everything always about cats',
+		};
+		return request(app)
+			.post('/api/articles')
+			.send(articleUpdate)
+			.expect(201)
+			.then((res) => {
+				expect(res.body.newArticle).toBeInstanceOf(Object);
+				expect(res.body.newArticle).toMatchObject({
+					article_id: expect.any(Number),
+					title: 'This project has been fun',
+					topic: 'cats',
+					author: 'butter_bridge',
+					body: 'Why is everything always about cats',
+					created_at: expect.any(String),
+					votes: 0,
+				});
+			});
+	});
+});
+describe('ERROR HANDLING - POST /api/articles', () => {
+	test('422: Responds with Unprocessable Entity message for invalid body', () => {
+		const articleUpdate = {
+			title: 'This project has been fun',
+			topic: 'cats',
+			author: 'butter_bridge',
+			body: 2000,
+		};
+		return request(app)
+			.post('/api/articles')
+			.send(articleUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format body: string',
+				});
+			});
+	});
+
+	test('422: Responds with Unprocessable Entity message for format body', () => {
+		const articleUpdate = {
+			title: 'This project has been fun',
+			topic: 'cats',
+			author: 'butter_bridge',
+			not_body: 'Test string',
+		};
+		return request(app)
+			.post('/api/articles')
+			.send(articleUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format body: string',
+				});
+			});
+	});
+	test('422: Responds with Unprocessable Entity message for invalid author/username', () => {
+		const articleUpdate = {
+			title: 'This project has been fun',
+			topic: 'cats',
+			author: 'random',
+			body: 'Test string',
+		};
+		return request(app)
+			.post('/api/articles')
+			.send(articleUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Username is not recognised please enter username:yourusername',
+				});
+			});
+	});
+	test('422: Responds with Unprocessable Entity message for format author', () => {
+		const articleUpdate = {
+			title: 'This project has been fun',
+			topic: 'cats',
+			not_author: 'butter_bridge',
+			body: 'Test string',
+		};
+		return request(app)
+			.post('/api/articles')
+			.send(articleUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Username is not recognised please enter username:yourusername',
+				});
+			});
+	});
+	test('422: Responds with Unprocessable Entity message for invalid topic', () => {
+		const articleUpdate = {
+			title: 'This project has been fun',
+			topic: 'dogs',
+			author: 'butter_bridge',
+			body: 'Test string',
+		};
+		return request(app)
+			.post('/api/articles')
+			.send(articleUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Topic is not recognised please add and re try in format topic: topicname',
+				});
+			});
+	});
+	test('422: Responds with Unprocessable Entity message for format of topic', () => {
+		const articleUpdate = {
+			title: 'This project has been fun',
+			not_topic: 'cats',
+			author: 'butter_bridge',
+			body: 'Test string',
+		};
+		return request(app)
+			.post('/api/articles')
+			.send(articleUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Topic is not recognised please add and re try in format topic: topicname',
+				});
+			});
+	});
+	test('422: Responds with Unprocessable Entity message for invalid title', () => {
+		const articleUpdate = {
+			title: 100,
+			topic: 'cats',
+			author: 'butter_bridge',
+			body: 'Test string',
+		};
+		return request(app)
+			.post('/api/articles')
+			.send(articleUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format title: string',
+				});
+			});
+	});
+	test('422: Responds with Unprocessable Entity message for format of topic', () => {
+		const articleUpdate = {
+			not_title: 'This project has been fun',
+			topic: 'cats',
+			author: 'butter_bridge',
+			body: 'Test string',
+		};
+		return request(app)
+			.post('/api/articles')
+			.send(articleUpdate)
+			.expect(422)
+			.then((res) => {
+				expect(res.body).toMatchObject({
+					msg: 'Unprocessable Entity- Please provide in format title: string',
+				});
+			});
+	});
+});
