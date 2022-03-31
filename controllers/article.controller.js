@@ -6,6 +6,7 @@ const {
 	sendCommentByID,
 	selectCommentsByArticleID,
 	sendArticles,
+	removeArticleByID,
 } = require('../models/article.model');
 
 exports.byArticleID = (req, res, next) => {
@@ -63,6 +64,15 @@ exports.postArticles = (req, res, next) => {
 	sendArticles(req.body)
 		.then((newArticle) => {
 			res.status(201).send({ newArticle });
+		})
+		.catch((err) => next(err));
+};
+
+exports.deleteArticleByID = (req, res, next) => {
+	const { article_id } = req.params;
+	removeArticleByID(article_id)
+		.then(() => {
+			res.status(204).send({});
 		})
 		.catch((err) => next(err));
 };
