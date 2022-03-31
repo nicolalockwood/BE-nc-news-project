@@ -471,3 +471,36 @@ describe('ERROR HANDLING - DELETE /api/comments/:comment_id', () => {
 			});
 	});
 });
+describe('GET /api/users/:username', () => {
+	test('200: responds with an users object, with the username, avatar url and username for the relevnat user name passed', () => {
+		return request(app)
+			.get('/api/users/butter_bridge')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.user).toEqual({
+					username: 'butter_bridge',
+					name: 'jonny',
+					avatar_url:
+						'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg',
+				});
+			});
+	});
+});
+describe(' ERROR HANDLING- GET /api/users/:username', () => {
+	test('404: Responds with message for valid but not recognised username ID', () => {
+		return request(app)
+			.get('/api/users/not-recognised')
+			.expect(404)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'User not found' });
+			});
+	});
+	test('400: Responds with bad request message for invalid format', () => {
+		return request(app)
+			.get('/api/users/10')
+			.expect(404)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'User not found' });
+			});
+	});
+});

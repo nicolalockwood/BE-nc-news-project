@@ -2,8 +2,12 @@ const usersRouter = require('express').Router();
 const express = require('express');
 const format = require('pg-format');
 
-const { getUsers } = require('../controllers/user.controller');
+const {
+	getUsers,
+	getUsersByUsername,
+} = require('../controllers/user.controller');
 
 usersRouter.route('/').get(getUsers);
 
+usersRouter.route('/:username').get(getUsersByUsername);
 module.exports = usersRouter;
