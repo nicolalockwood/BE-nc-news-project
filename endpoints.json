@@ -174,8 +174,6 @@
 	"DELETE /api/articles/:article_id": {
 		"description": "Serves an empty object, and deletes from the articles table the article with the specified ID, leaving the article_id in the comments table as null.",
 		"queries": [],
-		"exampleResponse": {
-			{},
-		}
+		"exampleResponse": {}
 	}
 }
