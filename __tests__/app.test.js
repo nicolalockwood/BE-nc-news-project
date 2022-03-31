@@ -286,12 +286,12 @@ describe('ERROR HANDLING - GET /api/articles - QUERIES', () => {
 				expect(res.body.msg).toBe('Invalid order by');
 			});
 	});
-	test('400: return "Invalid query parameter" error when invalid topic value is passed', () => {
+	test('404: return "Topic not found" error when invalid topic value is passed', () => {
 		return request(app)
 			.get('/api/articles?topic=incorrect')
-			.expect(400)
+			.expect(404)
 			.then((res) => {
-				expect(res.body.msg).toBe('Invalid query parameter');
+				expect(res.body.msg).toBe('Topic not found');
 			});
 	});
 });
@@ -445,6 +445,29 @@ describe('ERROR HANDLING - GET /api', () => {
 			.expect(404)
 			.then((res) => {
 				expect(res.body.msg).toEqual('Path not found');
+			});
+	});
+});
+describe('DELETE /api/comments/:comment_id', () => {
+	test('204: responds with an empty response body', () => {
+		return request(app).delete('/api/comments/1').expect(204);
+	});
+});
+describe('ERROR HANDLING - DELETE /api/comments/:comment_id', () => {
+	test('404: Responds with message for valid but not recognised comment ID', () => {
+		return request(app)
+			.delete('/api/comments/1000')
+			.expect(404)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'Content not found' });
+			});
+	});
+	test('400: Responds with bad request message for invalid format', () => {
+		return request(app)
+			.delete('/api/comments/six')
+			.expect(400)
+			.then((res) => {
+				expect(res.body).toMatchObject({ msg: 'Bad request' });
 			});
 	});
 });
