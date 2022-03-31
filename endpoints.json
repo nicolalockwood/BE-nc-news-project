@@ -137,5 +137,45 @@
 			"name": "jonny",
 			"avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
 		}
+	},
+	"PATCH /api/comments/:comment_id": {
+		"description": "Serves an object of an updated comment, that has increased or deducted the vote value by the ammount passed by the client",
+		"queries": [],
+		"exampleResponse": {
+			"comment_id": 1,
+			"body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+			"votes": 17,
+			"author": "butter_bridge",
+			"article_id": 9,
+			"created_at": 1527695953341
+		}
+	},
+	"POST /api/articles": {
+		"description": "Serves an object of a newly added article, created from the values passed by the client",
+		"queries": [],
+		"exampleResponse": {
+			"article_id": 1,
+			"title": "This project has been fun",
+			"topic": "cats",
+			"author": "butter_bridge",
+			"body": "Why is everything always about cats",
+			"created_at": 1527695953341,
+			"votes": 0
+		}
+	},
+	"POST /api/topics": {
+		"description": "Serves an object of a newly created added topic, created from the values passed by the client",
+		"queries": [],
+		"exampleResponse": {
+			"slug": "topic name here",
+			"description": "description here"
+		}
+	},
+	"DELETE /api/articles/:article_id": {
+		"description": "Serves an empty object, and deletes from the articles table the article with the specified ID, leaving the article_id in the comments table as null.",
+		"queries": [],
+		"exampleResponse": {
+			{},
+		}
 	}
 }
