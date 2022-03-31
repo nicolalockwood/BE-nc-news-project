@@ -1,27 +1,132 @@
 {
-  "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
-  },
-  "GET /api/topics": {
-    "description": "serves an array of all topics",
-    "queries": [],
-    "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
-    }
-  },
-  "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
-    "exampleResponse": {
-      "articles": [
-        {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
-        }
-      ]
-    }
-  }
+	"GET /api": {
+		"description": "serves up a json representation of all the available endpoints of the api"
+	},
+	"GET /api/topics": {
+		"description": "serves an array of all topics",
+		"queries": [],
+		"exampleResponse": {
+			"topics": [{ "slug": "football", "description": "Footie!" }]
+		}
+	},
+	"GET /api/articles": {
+		"description": "serves an array of all articles",
+		"queries": ["topic", "sort_by", "order"],
+		"exampleResponse": {
+			"articles": [
+				{
+					"title": "Seafood substitutions are increasing",
+					"topic": "cooking",
+					"author": "weegembump",
+					"body": "Text from the article..",
+					"created_at": 1527695953341
+				}
+			]
+		}
+	},
+	"GET /api/articles/:article_id": {
+		"description": "serves an array of an article, found by article ID with a count of comments grouped by ID ",
+		"queries": [],
+		"exampleResponse": {
+			"articles": [
+				{
+					"article_id": 1,
+					"title": "Living in the shadow of a great man",
+					"topic": "mitch",
+					"author": "butter_bridge",
+					"body": "I find this existence challenging",
+					"created_at": 1527695953341,
+					"votes": 100,
+					"comment_count": 11
+				}
+			]
+		}
+	},
+	"PATCH /api/articles/:article_id": {
+		"description": "serves an array of an updated articles, found by article ID with a count of comments grouped by ID. Updated based on object sent in format {inc_votes:vote_number} inc_votes value will be added or subtracted to votes value in response",
+		"queries": [],
+		"exampleResponse": {
+			"articles": [
+				{
+					"article_id": 1,
+					"title": "Living in the shadow of a great man",
+					"topic": "mitch",
+					"author": "butter_bridge",
+					"body": "I find this existence challenging",
+					"created_at": 1527695953341,
+					"votes": 100,
+					"comment_count": 11
+				}
+			]
+		}
+	},
+	"GET /api/users": {
+		"description": "Serves an array of all users from users database, responding with only username field",
+		"queries": [],
+		"exampleResponse": {
+			"articles": [
+				{
+					"username": "butter_bridge"
+				}
+			]
+		}
+	},
+	"POST /api/articles/:article_id/comments": {
+		"description": "Serves an array of a newly created comment generated for the releveant article id, after receiving an updated comment in format {username: butter_bridge body: Test comment} ",
+		"queries": [],
+		"exampleResponse": {
+			"articles": [
+				{
+					"comment_id": 19,
+					"article_id": 9,
+					"body": "Test comment",
+					"votes": 0,
+					"author": "butter_bridge",
+					"created_at": 1527695953341
+				}
+			]
+		}
+	},
+	"GET /api/articles/:article_id/comments": {
+		"description": "Serves an array of a comments from comment db, which are related to the appropriate article ID  ",
+		"queries": [],
+		"exampleResponse": {
+			"articles": [
+				{
+					"comment_id": 19,
+					"body": "Test comment",
+					"votes": 0,
+					"author": "butter_bridge",
+					"created_at": 1527695953341
+				}
+			]
+		}
+	},
+	"DELETE /api/articles/:comments_id": {
+		"description": "Deletes a comment from the comment database, identrified by article ID and comment ID passed and returns an empty object",
+		"queries": [],
+		"exampleResponse": {
+			"articles": [{}]
+		}
+	},
+	"USE psqlErrors": {
+		"description": "To give error message relating to PSQL errors",
+		"queries": [],
+		"exampleResponse": { "msg": "Bad request" }
+	},
+	"USE nonPsqlErrors": {
+		"description": "To give custom error message relating to each endpoint ",
+		"queries": [],
+		"exampleResponse": { "msg": "err msg" }
+	},
+	"USE internalServerError": {
+		"description": "To give error message if previous errors are not catched and there is a server error, will print error in console. ",
+		"queries": [],
+		"exampleResponse": { "msg": "Internal server error" }
+	},
+	"ALL /*": {
+		"description": "To give error message if path not found for invalid URL passed. ",
+		"queries": [],
+		"exampleResponse": { "msg": "Path not found" }
+	}
 }
