@@ -59,18 +59,65 @@ exports.selectArticles = (
 	page = 1,
 	limit = 10
 ) => {
-	const validColumns = [
-		'comment_count',
-		'article_id',
-		'title',
-		'topic',
-		'author',
-		'body',
-		'created_at',
-		'votes',
-	];
+	return db
+		.query('SELECT count(*) FROM articles AS total_count;')
+		.then(({ rows }) => {
+			const count = rows[0].count;
+			const validColumns = [
+				'comment_count',
+				'article_id',
+				'title',
+				'topic',
+				'author',
+				'body',
+				'created_at',
+				'votes',
+			];
+			const validSort = ['ASC', 'DESC', 'asc', 'desc'];
+			const validTopic = ['mitch', 'cats'];
 
-	const validSort = ['ASC', 'DESC', 'asc', 'desc'];
+			let actualPage = [];
+			const actualLimit = parseInt(limit);
+			const pageNum = page - 1;
+
+			if (page > 1) {
+				actualPage.push(pageNum * actualLimit);
+			}
+			if ((page = 1)) {
+				actualPage.push(pageNum);
+			}
+
+			if (!validSort.includes(order)) {
+				return Promise.reject({ status: 400, msg: 'Invalid order by' });
+			}
+
+			if (!validColumns.includes(sort_by)) {
+				return Promise.reject({ status: 400, msg: 'Invalid sort by' });
+			}
+			if (topic && !validTopic.includes(topic)) {
+				return Promise.reject({ status: 404, msg: 'Topic not found' });
+			}
+
+			let queryStr =
+				'SELECT a.*, count(c.article_id) AS comment_count FROM articles a FULL OUTER JOIN comments c ON a.article_id = c.article_id';
+			let queryValues = [];
+
+			if (topic) {
+				queryStr += ` WHERE topic = $1`;
+				queryValues.push(topic);
+			}
+
+			queryStr += ` GROUP BY a.article_id ORDER BY ${sort_by} ${order} LIMIT ${limit} OFFSET ${actualPage[0]};`;
+			return db.query(queryStr, queryValues).then(({ rows }) => {
+				rows.forEach((row) => {
+					row.total_count = count;
+				});
+				return rows;
+			});
+		});
+};
+
+exports.selectCommentsByArticleID = (id, page = 1, limit = 10) => {
 	let actualPage = [];
 	const actualLimit = parseInt(limit);
 	const pageNum = page - 1;
@@ -81,39 +128,10 @@ exports.selectArticles = (
 	if ((page = 1)) {
 		actualPage.push(pageNum);
 	}
-	console.log(actualPage);
-	const validTopic = ['mitch', 'cats'];
-	if (!validSort.includes(order)) {
-		return Promise.reject({ status: 400, msg: 'Invalid order by' });
-	}
-
-	if (!validColumns.includes(sort_by)) {
-		return Promise.reject({ status: 400, msg: 'Invalid sort by' });
-	}
-	if (topic && !validTopic.includes(topic)) {
-		return Promise.reject({ status: 404, msg: 'Topic not found' });
-	}
-
-	let queryStr =
-		'SELECT a.*, count(c.article_id) AS comment_count FROM articles a FULL OUTER JOIN comments c ON a.article_id = c.article_id';
-	let queryValues = [];
-
-	if (topic) {
-		queryStr += ` WHERE topic = $1`;
-		queryValues.push(topic);
-	}
-
-	queryStr += ` GROUP BY a.article_id ORDER BY ${sort_by} ${order} LIMIT ${limit} OFFSET ${actualPage[0]};`;
-	return db.query(queryStr, queryValues).then(({ rows }) => {
-		return rows;
-	});
-};
-
-exports.selectCommentsByArticleID = (id) => {
 	return db
 		.query(
-			'SELECT comment_id, body, author, votes, created_at FROM comments WHERE article_id = $1;',
-			[id]
+			'SELECT comment_id, body, author, votes, created_at FROM comments WHERE article_id = $1 LIMIT $2 OFFSET $3;',
+			[id, limit, actualPage[0]]
 		)
 		.then(({ rows }) => {
 			return rows;

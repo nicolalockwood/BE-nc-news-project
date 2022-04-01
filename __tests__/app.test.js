@@ -308,7 +308,7 @@ describe('GET /api/articles -PAGINATION', () => {
 				expect(res.body.articles.length).toBe(5);
 			});
 	});
-	test('200: If page 2 limit 5 is selected, the result returned is articles 6-10', () => {
+	test('200: If page 2 limit 5 is selected, the result returned is articles 6-10 including total count of all articles', () => {
 		return request(app)
 			.get('/api/articles/?page=2&limit=5')
 			.expect(200)
@@ -327,6 +327,7 @@ describe('GET /api/articles -PAGINATION', () => {
 					created_at: expect.any(String),
 					votes: 100,
 					comment_count: '11',
+					total_count: '12',
 				});
 			});
 	});
@@ -350,10 +351,12 @@ describe('POST /api/articles/:article_id/comments', () => {
 					votes: 0,
 					author: 'butter_bridge',
 					created_at: expect.any(String),
+					// });
 				});
 			});
 	});
 });
+
 describe('ERROR HANDLING - POST /api/articles/:article_id/comments', () => {
 	test('422: Responds with Unprocessable Entity message for invalid body', () => {
 		const commentUpdate = {
@@ -442,6 +445,33 @@ describe('GET /api/articles/:article_id/comments', () => {
 			.then((res) => {
 				expect(res.body.commentData).toBeInstanceOf(Array);
 				expect(res.body.commentData).toEqual([]);
+			});
+	});
+});
+describe('GET /api/articles/:article_id/comments -PAGINATION', () => {
+	test('200: Accepts a p and limit query and returns the limit ammount in desc order', () => {
+		return request(app)
+			.get('/api/articles/9/comments/?page=1&limit=5')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.commentData).toBeInstanceOf(Array);
+				expect(res.body.commentData.length).toBe(2);
+			});
+	});
+	test('200: If page 2 limit 5 is selected, the result returned is comment 6-10 for specified article', () => {
+		return request(app)
+			.get('/api/articles/1/comments/?page=2&limit=5')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.commentData).toBeInstanceOf(Array);
+				expect(res.body.commentData.length).toBe(10);
+				expect(res.body.commentData[0]).toEqual({
+					comment_id: 2,
+					body: 'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
+					votes: 14,
+					author: 'butter_bridge',
+					created_at: expect.any(String),
+				});
 			});
 	});
 });

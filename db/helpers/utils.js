@@ -23,23 +23,24 @@ exports.formatComments = (comments, idLookup) => {
 	});
 };
 
-// exports.paginatedResults = (results, page, limit) => {
-// 	return (req, res, next) => {
-// 		const startIndex = (page - 1) * limit;
+exports.paginatedResults = (results, page, limit) => {
+	return (req, res, next) => {
+		const startIndex = (page - 1) * limit;
 
-// 		const endIndex = page * limit;
+		const endIndex = page * limit;
 
-// 		const results = {};
+		const results = {};
 
-// 		if (endIndex < results.length) {
-// 			results.next = { page: page + 1, limit: limit };
-// 		}
-// 		if (startIndex > 0) {
-// 			results.previous = {
-// 				page: page - 1,
-// 				limit: limit,
-// 			};
-// 		}
-// 		return (results.results = users.slice(startIndex, endIndex));
-// 	};
-// };
+		if (endIndex > results.length)
+			if (endIndex < results.length) {
+				results.next = { page: page + 1, limit: limit };
+			}
+		if (startIndex > 0) {
+			results.previous = {
+				page: page - 1,
+				limit: limit,
+			};
+		}
+		return (results.results = users.slice(startIndex, endIndex));
+	};
+};
