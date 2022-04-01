@@ -28,8 +28,8 @@ exports.patchArticleID = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-	const { sort_by, order, topic } = req.query;
-	selectArticles(sort_by, order, topic)
+	const { sort_by, order, topic, page, limit } = req.query;
+	selectArticles(sort_by, order, topic, page, limit)
 		.then((articles) => {
 			res.status(200).send({ articles });
 		})

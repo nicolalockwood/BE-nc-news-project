@@ -52,7 +52,13 @@ exports.updateArticleID = (voteUpdate, id) => {
 		});
 };
 
-exports.selectArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
+exports.selectArticles = (
+	sort_by = 'created_at',
+	order = 'DESC',
+	topic,
+	page = 1,
+	limit = 10
+) => {
 	const validColumns = [
 		'comment_count',
 		'article_id',
@@ -65,7 +71,17 @@ exports.selectArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
 	];
 
 	const validSort = ['ASC', 'DESC', 'asc', 'desc'];
+	let actualPage = [];
+	const actualLimit = parseInt(limit);
+	const pageNum = page - 1;
 
+	if (page > 1) {
+		actualPage.push(pageNum * actualLimit);
+	}
+	if ((page = 1)) {
+		actualPage.push(pageNum);
+	}
+	console.log(actualPage);
 	const validTopic = ['mitch', 'cats'];
 	if (!validSort.includes(order)) {
 		return Promise.reject({ status: 400, msg: 'Invalid order by' });
@@ -87,7 +103,7 @@ exports.selectArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
 		queryValues.push(topic);
 	}
 
-	queryStr += ` GROUP BY a.article_id ORDER BY ${sort_by} ${order};`;
+	queryStr += ` GROUP BY a.article_id ORDER BY ${sort_by} ${order} LIMIT ${limit} OFFSET ${actualPage[0]};`;
 	return db.query(queryStr, queryValues).then(({ rows }) => {
 		return rows;
 	});

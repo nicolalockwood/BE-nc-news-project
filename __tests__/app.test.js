@@ -209,7 +209,7 @@ describe('GET /api/articles', () => {
 					descending: true,
 					coerce: true,
 				});
-				expect(res.body.articles.length).toBe(12);
+				expect(res.body.articles.length).toBe(10);
 				expect(res.body.articles).toBeInstanceOf(Array);
 				res.body.articles.forEach((article) => {
 					expect(article).toMatchObject({
@@ -292,6 +292,42 @@ describe('ERROR HANDLING - GET /api/articles - QUERIES', () => {
 			.expect(404)
 			.then((res) => {
 				expect(res.body.msg).toBe('Topic not found');
+			});
+	});
+});
+describe('GET /api/articles -PAGINATION', () => {
+	test('200: Accepts a p and limit query and returns the limit ammount in desc order', () => {
+		return request(app)
+			.get('/api/articles/?page=1&limit=5')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.articles).toBeSortedBy('created_at', {
+					descending: true,
+					coerce: true,
+				});
+				expect(res.body.articles.length).toBe(5);
+			});
+	});
+	test('200: If page 2 limit 5 is selected, the result returned is articles 6-10', () => {
+		return request(app)
+			.get('/api/articles/?page=2&limit=5')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.articles).toBeSortedBy('created_at', {
+					descending: true,
+					coerce: true,
+				});
+				expect(res.body.articles.length).toBe(5);
+				expect(res.body.articles[0]).toEqual({
+					article_id: 1,
+					title: 'Living in the shadow of a great man',
+					topic: 'mitch',
+					author: 'butter_bridge',
+					body: 'I find this existence challenging',
+					created_at: expect.any(String),
+					votes: 100,
+					comment_count: '11',
+				});
 			});
 	});
 });
