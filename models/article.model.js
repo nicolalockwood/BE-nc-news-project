@@ -74,7 +74,6 @@ exports.selectArticles = (
 				'votes',
 			];
 			const validSort = ['ASC', 'DESC', 'asc', 'desc'];
-			const validTopic = ['mitch', 'cats'];
 
 			let actualPage = [];
 			const actualLimit = parseInt(limit);
@@ -94,9 +93,6 @@ exports.selectArticles = (
 			if (!validColumns.includes(sort_by)) {
 				return Promise.reject({ status: 400, msg: 'Invalid sort by' });
 			}
-			if (topic && !validTopic.includes(topic)) {
-				return Promise.reject({ status: 404, msg: 'Topic not found' });
-			}
 
 			let queryStr =
 				'SELECT a.*, count(c.article_id) AS comment_count FROM articles a FULL OUTER JOIN comments c ON a.article_id = c.article_id';
@@ -112,6 +108,9 @@ exports.selectArticles = (
 				rows.forEach((row) => {
 					row.total_count = count;
 				});
+				if (rows.length === 0) {
+					return Promise.reject({ status: 404, msg: 'Not found' });
+				}
 				return rows;
 			});
 		});

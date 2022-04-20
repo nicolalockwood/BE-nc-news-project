@@ -33,7 +33,9 @@ exports.getArticles = (req, res, next) => {
 		.then((articles) => {
 			res.status(200).send({ articles });
 		})
-		.catch((err) => next(err));
+		.catch((err) => {
+			next(err);
+		});
 };
 
 exports.postCommentByID = (req, res, next) => {

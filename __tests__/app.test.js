@@ -291,7 +291,7 @@ describe('ERROR HANDLING - GET /api/articles - QUERIES', () => {
 			.get('/api/articles?topic=incorrect')
 			.expect(404)
 			.then((res) => {
-				expect(res.body.msg).toBe('Topic not found');
+				expect(res.body.msg).toBe('Not found');
 			});
 	});
 });
