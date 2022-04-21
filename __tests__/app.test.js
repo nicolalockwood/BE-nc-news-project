@@ -389,21 +389,21 @@ describe('ERROR HANDLING - POST /api/articles/:article_id/comments', () => {
 				});
 			});
 	});
-	test('422: Responds with Unprocessable Entity message for invalid username', () => {
-		const commentUpdate = {
-			username: 'not_current_user',
-			body: 'Test comment',
-		};
-		return request(app)
-			.post('/api/articles/9/comments')
-			.send(commentUpdate)
-			.expect(422)
-			.then((res) => {
-				expect(res.body).toMatchObject({
-					msg: 'Unprocessable Entity- Username is not recognised',
-				});
-			});
-	});
+	// test('422: Responds with Unprocessable Entity message for invalid username', () => {
+	// 	const commentUpdate = {
+	// 		username: 'not_current_user',
+	// 		body: 'Test comment',
+	// 	};
+	// 	return request(app)
+	// 		.post('/api/articles/9/comments')
+	// 		.send(commentUpdate)
+	// 		.expect(422)
+	// 		.then((res) => {
+	// 			expect(res.body).toMatchObject({
+	// 				msg: 'Unprocessable Entity- Username is not recognised',
+	// 			});
+	// 		});
+	// });
 	test('404: Responds with message for valid but not recognised article ID', () => {
 		const commentUpdate = {
 			username: 'butter_bridge',

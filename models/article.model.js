@@ -138,18 +138,7 @@ exports.selectCommentsByArticleID = (id, page = 1, limit = 10) => {
 };
 exports.sendCommentByID = (newBody, ID) => {
 	const { username, body } = newBody;
-	const validUserNames = [
-		'butter_bridge',
-		'icellusedkars',
-		'rogersop ',
-		'lurker ',
-	];
-	if (!validUserNames.includes(username)) {
-		return Promise.reject({
-			status: 422,
-			msg: 'Unprocessable Entity- Username is not recognised',
-		});
-	}
+
 	if (typeof body !== 'string') {
 		return Promise.reject({
 			status: 422,
