@@ -389,21 +389,7 @@ describe('ERROR HANDLING - POST /api/articles/:article_id/comments', () => {
 				});
 			});
 	});
-	// test('422: Responds with Unprocessable Entity message for invalid username', () => {
-	// 	const commentUpdate = {
-	// 		username: 'not_current_user',
-	// 		body: 'Test comment',
-	// 	};
-	// 	return request(app)
-	// 		.post('/api/articles/9/comments')
-	// 		.send(commentUpdate)
-	// 		.expect(422)
-	// 		.then((res) => {
-	// 			expect(res.body).toMatchObject({
-	// 				msg: 'Unprocessable Entity- Username is not recognised',
-	// 			});
-	// 		});
-	// });
+
 	test('404: Responds with message for valid but not recognised article ID', () => {
 		const commentUpdate = {
 			username: 'butter_bridge',
@@ -466,10 +452,10 @@ describe('GET /api/articles/:article_id/comments -PAGINATION', () => {
 				expect(res.body.commentData).toBeInstanceOf(Array);
 				expect(res.body.commentData.length).toBe(10);
 				expect(res.body.commentData[0]).toEqual({
-					comment_id: 2,
-					body: 'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
-					votes: 14,
-					author: 'butter_bridge',
+					comment_id: 5,
+					body: 'I hate streaming noses',
+					votes: 0,
+					author: 'icellusedkars',
 					created_at: expect.any(String),
 				});
 			});

@@ -129,7 +129,7 @@ exports.selectCommentsByArticleID = (id, page = 1, limit = 10) => {
 	}
 	return db
 		.query(
-			'SELECT comment_id, body, author, votes, created_at FROM comments WHERE article_id = $1 LIMIT $2 OFFSET $3;',
+			'SELECT comment_id, body, author, votes, created_at FROM comments WHERE article_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3;',
 			[id, limit, actualPage[0]]
 		)
 		.then(({ rows }) => {
