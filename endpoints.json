@@ -102,7 +102,7 @@
 			]
 		}
 	},
-	"DELETE /api/articles/:comments_id": {
+	"DELETE /api/comments/:comments_id": {
 		"description": "Deletes a comment from the comment database, identrified by article ID and comment ID passed and returns an empty object",
 		"queries": [],
 		"exampleResponse": {

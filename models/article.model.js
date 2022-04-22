@@ -157,13 +157,6 @@ exports.sendCommentByID = (newBody, ID) => {
 
 exports.sendArticles = (newBody) => {
 	const { title, topic, author, body } = newBody;
-	const validUserNames = [
-		'butter_bridge',
-		'icellusedkars',
-		'rogersop ',
-		'lurker ',
-	];
-	const validTopic = ['mitch', 'cats', 'paper'];
 
 	if (typeof title !== 'string') {
 		return Promise.reject({
@@ -171,18 +164,7 @@ exports.sendArticles = (newBody) => {
 			msg: 'Unprocessable Entity- Please provide in format title: string',
 		});
 	}
-	if (!validTopic.includes(topic)) {
-		return Promise.reject({
-			status: 422,
-			msg: 'Unprocessable Entity- Topic is not recognised please add and re try in format topic: topicname',
-		});
-	}
-	if (!validUserNames.includes(author)) {
-		return Promise.reject({
-			status: 422,
-			msg: 'Unprocessable Entity- Username is not recognised please enter username:yourusername',
-		});
-	}
+
 	if (typeof body !== 'string') {
 		return Promise.reject({
 			status: 422,

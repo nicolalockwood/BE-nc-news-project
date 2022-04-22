@@ -700,74 +700,6 @@ describe('ERROR HANDLING - POST /api/articles', () => {
 				});
 			});
 	});
-	test('422: Responds with Unprocessable Entity message for invalid author/username', () => {
-		const articleUpdate = {
-			title: 'This project has been fun',
-			topic: 'cats',
-			author: 'random',
-			body: 'Test string',
-		};
-		return request(app)
-			.post('/api/articles')
-			.send(articleUpdate)
-			.expect(422)
-			.then((res) => {
-				expect(res.body).toMatchObject({
-					msg: 'Unprocessable Entity- Username is not recognised please enter username:yourusername',
-				});
-			});
-	});
-	test('422: Responds with Unprocessable Entity message for format author', () => {
-		const articleUpdate = {
-			title: 'This project has been fun',
-			topic: 'cats',
-			not_author: 'butter_bridge',
-			body: 'Test string',
-		};
-		return request(app)
-			.post('/api/articles')
-			.send(articleUpdate)
-			.expect(422)
-			.then((res) => {
-				expect(res.body).toMatchObject({
-					msg: 'Unprocessable Entity- Username is not recognised please enter username:yourusername',
-				});
-			});
-	});
-	test('422: Responds with Unprocessable Entity message for invalid topic', () => {
-		const articleUpdate = {
-			title: 'This project has been fun',
-			topic: 'dogs',
-			author: 'butter_bridge',
-			body: 'Test string',
-		};
-		return request(app)
-			.post('/api/articles')
-			.send(articleUpdate)
-			.expect(422)
-			.then((res) => {
-				expect(res.body).toMatchObject({
-					msg: 'Unprocessable Entity- Topic is not recognised please add and re try in format topic: topicname',
-				});
-			});
-	});
-	test('422: Responds with Unprocessable Entity message for format of topic', () => {
-		const articleUpdate = {
-			title: 'This project has been fun',
-			not_topic: 'cats',
-			author: 'butter_bridge',
-			body: 'Test string',
-		};
-		return request(app)
-			.post('/api/articles')
-			.send(articleUpdate)
-			.expect(422)
-			.then((res) => {
-				expect(res.body).toMatchObject({
-					msg: 'Unprocessable Entity- Topic is not recognised please add and re try in format topic: topicname',
-				});
-			});
-	});
 	test('422: Responds with Unprocessable Entity message for invalid title', () => {
 		const articleUpdate = {
 			title: 100,
@@ -785,7 +717,7 @@ describe('ERROR HANDLING - POST /api/articles', () => {
 				});
 			});
 	});
-	test('422: Responds with Unprocessable Entity message for format of topic', () => {
+	test('422: Responds with Unprocessable Entity message for format of title', () => {
 		const articleUpdate = {
 			not_title: 'This project has been fun',
 			topic: 'cats',
