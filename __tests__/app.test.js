@@ -268,6 +268,15 @@ describe('GET /api/articles - QUERIES', () => {
 				});
 			});
 	});
+	test('200: Accepts a topic query and filters based on input even if no articles on that topic', () => {
+		return request(app)
+			.get('/api/articles/?topic=paper')
+			.expect(200)
+			.then((res) => {
+				expect(res.body.articles.length).toBe(0);
+				expect(res.body.articles).toEqual([]);
+			});
+	});
 });
 describe('ERROR HANDLING - GET /api/articles - QUERIES', () => {
 	test('400: return "Invalid sort by" error when invalid sort by value is passed', () => {

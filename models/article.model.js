@@ -3,6 +3,7 @@ const db = require('../db/connection');
 const format = require('pg-format');
 const { selectTopics } = require('../models/topic.model');
 const { selectUsers } = require('../models/user.model');
+const topics = require('../db/data/test-data/topics');
 
 exports.selectArticleID = (article_id) => {
 	return db
@@ -55,65 +56,75 @@ exports.updateArticleID = (voteUpdate, id) => {
 exports.selectArticles = (
 	sort_by = 'created_at',
 	order = 'DESC',
-	topic,
+	topicSlug,
 	page = 1,
 	limit = 10
 ) => {
-	return db
-		.query('SELECT count(*) FROM articles AS total_count;')
-		.then(({ rows }) => {
-			const count = rows[0].count;
-			const validColumns = [
-				'comment_count',
-				'article_id',
-				'title',
-				'topic',
-				'author',
-				'body',
-				'created_at',
-				'votes',
-			];
-			const validSort = ['ASC', 'DESC', 'asc', 'desc'];
-
-			let actualPage = [];
-			const actualLimit = parseInt(limit);
-			const pageNum = page - 1;
-
-			if (page > 1) {
-				actualPage.push(pageNum * actualLimit);
+	let queryPromise;
+	if (topicSlug !== undefined) {
+		queryPromise = selectTopics().then((topics) => {
+			console.log(topics);
+			console.log(topicSlug);
+			const matchedTopics = topics.filter((t) => t.slug === topicSlug);
+			if (matchedTopics.length === 0) {
+				return Promise.reject({ status: 404, msg: 'Not found' });
 			}
-			if ((page = 1)) {
-				actualPage.push(pageNum);
-			}
-
-			if (!validSort.includes(order)) {
-				return Promise.reject({ status: 400, msg: 'Invalid order by' });
-			}
-
-			if (!validColumns.includes(sort_by)) {
-				return Promise.reject({ status: 400, msg: 'Invalid sort by' });
-			}
-
-			let queryStr =
-				'SELECT a.*, count(c.article_id) AS comment_count FROM articles a FULL OUTER JOIN comments c ON a.article_id = c.article_id';
-			let queryValues = [];
-
-			if (topic) {
-				queryStr += ` WHERE topic = $1`;
-				queryValues.push(topic);
-			}
-
-			queryStr += ` GROUP BY a.article_id ORDER BY ${sort_by} ${order} LIMIT ${limit} OFFSET ${actualPage[0]};`;
-			return db.query(queryStr, queryValues).then(({ rows }) => {
-				rows.forEach((row) => {
-					row.total_count = count;
-				});
-				if (rows.length === 0) {
-					return Promise.reject({ status: 404, msg: 'Not found' });
-				}
-				return rows;
-			});
+			return db.query('SELECT count(*) FROM articles AS total_count;');
 		});
+	} else {
+		queryPromise = db.query('SELECT count(*) FROM articles AS total_count;');
+	}
+
+	return queryPromise.then(({ rows }) => {
+		const count = rows[0].count;
+		const validColumns = [
+			'comment_count',
+			'article_id',
+			'title',
+			'topic',
+			'author',
+			'body',
+			'created_at',
+			'votes',
+		];
+		const validSort = ['ASC', 'DESC', 'asc', 'desc'];
+
+		let actualPage = [];
+		const actualLimit = parseInt(limit);
+		const pageNum = page - 1;
+
+		if (page > 1) {
+			actualPage.push(pageNum * actualLimit);
+		}
+		if ((page = 1)) {
+			actualPage.push(pageNum);
+		}
+
+		if (!validSort.includes(order)) {
+			return Promise.reject({ status: 400, msg: 'Invalid order by' });
+		}
+
+		if (!validColumns.includes(sort_by)) {
+			return Promise.reject({ status: 400, msg: 'Invalid sort by' });
+		}
+
+		let queryStr =
+			'SELECT a.*, count(c.article_id) AS comment_count FROM articles a FULL OUTER JOIN comments c ON a.article_id = c.article_id';
+		let queryValues = [];
+
+		if (topicSlug) {
+			queryStr += ` WHERE topic = $1`;
+			queryValues.push(topicSlug);
+		}
+
+		queryStr += ` GROUP BY a.article_id ORDER BY ${sort_by} ${order} LIMIT ${limit} OFFSET ${actualPage[0]};`;
+		return db.query(queryStr, queryValues).then(({ rows }) => {
+			rows.forEach((row) => {
+				row.total_count = count;
+			});
+			return rows;
+		});
+	});
 };
 
 exports.selectCommentsByArticleID = (id, page = 1, limit = 10) => {
