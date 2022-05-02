@@ -63,8 +63,6 @@ exports.selectArticles = (
 	let queryPromise;
 	if (topicSlug !== undefined) {
 		queryPromise = selectTopics().then((topics) => {
-			console.log(topics);
-			console.log(topicSlug);
 			const matchedTopics = topics.filter((t) => t.slug === topicSlug);
 			if (matchedTopics.length === 0) {
 				return Promise.reject({ status: 404, msg: 'Not found' });
@@ -122,6 +120,7 @@ exports.selectArticles = (
 			rows.forEach((row) => {
 				row.total_count = count;
 			});
+
 			return rows;
 		});
 	});
@@ -139,9 +138,9 @@ exports.selectCommentsByArticleID = (id, page = 1, limit = 10) => {
 		actualPage.push(pageNum);
 	}
 	return db
+
 		.query(
-			'SELECT comment_id, body, author, votes, created_at FROM comments WHERE article_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3;',
-			[id, limit, actualPage[0]]
+			`SELECT comment_id, body, author, votes, created_at FROM comments WHERE article_id = ${id} ORDER BY created_at DESC LIMIT ${limit} OFFSET ${actualPage[0]};`
 		)
 		.then(({ rows }) => {
 			return rows;

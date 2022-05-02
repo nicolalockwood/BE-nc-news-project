@@ -51,7 +51,8 @@ exports.postCommentByID = (req, res, next) => {
 };
 
 exports.commentsByArticleID = (req, res, next) => {
-	const { article_id, page, limit } = req.params;
+	const { article_id } = req.params;
+	const { page, limit } = req.query;
 	const promises = [selectArticleID(article_id)];
 	if (article_id)
 		promises.push(selectCommentsByArticleID(article_id, page, limit));

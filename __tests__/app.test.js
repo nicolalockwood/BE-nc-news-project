@@ -455,14 +455,14 @@ describe('GET /api/articles/:article_id/comments -PAGINATION', () => {
 	});
 	test('200: If page 2 limit 5 is selected, the result returned is comment 6-10 for specified article', () => {
 		return request(app)
-			.get('/api/articles/1/comments/?page=2&limit=5')
+			.get('/api/articles/1/comments?page=2&limit=5')
 			.expect(200)
 			.then((res) => {
 				expect(res.body.commentData).toBeInstanceOf(Array);
-				expect(res.body.commentData.length).toBe(10);
+				expect(res.body.commentData.length).toBe(5);
 				expect(res.body.commentData[0]).toEqual({
-					comment_id: 5,
-					body: 'I hate streaming noses',
+					comment_id: 8,
+					body: 'Delicious crackerbreads',
 					votes: 0,
 					author: 'icellusedkars',
 					created_at: expect.any(String),
