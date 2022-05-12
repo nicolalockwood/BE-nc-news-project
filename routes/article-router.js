@@ -15,7 +15,7 @@ const {
 articleRouter.route('/').get(getArticles).post(postArticles);
 
 articleRouter
-	.route('/:article_id')
+	.route('/article/:article_id')
 	.get(byArticleID)
 	.patch(patchArticleID)
 	.delete(deleteArticleByID);

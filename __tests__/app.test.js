@@ -35,10 +35,10 @@ describe('ERROR HANDLING- GET /api/topics', () => {
 	});
 });
 
-describe('GET /api/articles/:article_id', () => {
+describe('GET /api/articles/article/:article_id', () => {
 	test('200: responds with an articles object, with the username as from users as author', () => {
 		return request(app)
-			.get('/api/articles/1')
+			.get('/api/articles/article/1')
 			.expect(200)
 			.then((res) => {
 				expect(res.body.article).toEqual({
@@ -55,7 +55,7 @@ describe('GET /api/articles/:article_id', () => {
 	});
 	test('200: responds with an articles object, even if comment_count is 0', () => {
 		return request(app)
-			.get('/api/articles/4')
+			.get('/api/articles/article/4')
 			.expect(200)
 			.then((res) => {
 				expect(res.body.article).toEqual({
@@ -71,10 +71,10 @@ describe('GET /api/articles/:article_id', () => {
 			});
 	});
 });
-describe(' ERROR HANDLING- GET /api/articles/:article_id', () => {
+describe(' ERROR HANDLING- GET /api/articles/article/:article_id', () => {
 	test('404: Responds with message for valid but not recognised article ID', () => {
 		return request(app)
-			.get('/api/articles/1000')
+			.get('/api/articles/article/1000')
 			.expect(404)
 			.then((res) => {
 				expect(res.body).toMatchObject({ msg: 'Article not found' });
@@ -82,7 +82,7 @@ describe(' ERROR HANDLING- GET /api/articles/:article_id', () => {
 	});
 	test('400: Responds with bad request message for invalid format', () => {
 		return request(app)
-			.get('/api/articles/six')
+			.get('/api/articles/article/six')
 			.expect(400)
 			.then((res) => {
 				expect(res.body).toMatchObject({ msg: 'Bad request' });
@@ -90,11 +90,11 @@ describe(' ERROR HANDLING- GET /api/articles/:article_id', () => {
 	});
 });
 
-describe('PATCH /api/articles/:article_id', () => {
+describe('PATCH /api/articles/article/:article_id', () => {
 	test('200: responds with an updated articles object', () => {
 		const voteUpdate = { inc_votes: 1 };
 		return request(app)
-			.patch('/api/articles/1')
+			.patch('/api/articles/article/1')
 			.send(voteUpdate)
 			.expect(200)
 			.then(({ body }) => {
@@ -112,7 +112,7 @@ describe('PATCH /api/articles/:article_id', () => {
 	test('200: responds with an updated articles object if votes deducted', () => {
 		const voteUpdate = { inc_votes: -10 };
 		return request(app)
-			.patch('/api/articles/1')
+			.patch('/api/articles/article/1')
 			.send(voteUpdate)
 			.expect(200)
 			.then(({ body }) => {
@@ -128,11 +128,11 @@ describe('PATCH /api/articles/:article_id', () => {
 			});
 	});
 });
-describe('ERROR HANDLING-PATCH /api/articles/:article_id', () => {
+describe('ERROR HANDLING-PATCH /api/articles/article/:article_id', () => {
 	test('422: Responds with Unprocessable Entity message for invalid vote', () => {
 		const voteUpdate = { inc_votes: 'notInteger' };
 		return request(app)
-			.patch('/api/articles/1')
+			.patch('/api/articles/article/1')
 			.send(voteUpdate)
 			.expect(422)
 			.then((res) => {
@@ -144,7 +144,7 @@ describe('ERROR HANDLING-PATCH /api/articles/:article_id', () => {
 	test('422: Responds with Unprocessable Entity message for format inc_votes', () => {
 		const voteUpdate = { not_inc_votes: 10 };
 		return request(app)
-			.patch('/api/articles/1')
+			.patch('/api/articles/article/1')
 			.send(voteUpdate)
 			.expect(422)
 			.then((res) => {
@@ -156,7 +156,7 @@ describe('ERROR HANDLING-PATCH /api/articles/:article_id', () => {
 	test('404: Responds with message for valid but not recognised article ID', () => {
 		const voteUpdate = { inc_votes: 1 };
 		return request(app)
-			.patch('/api/articles/1000')
+			.patch('/api/articles/article/1000')
 			.send(voteUpdate)
 			.expect(404)
 			.then((res) => {
@@ -166,7 +166,7 @@ describe('ERROR HANDLING-PATCH /api/articles/:article_id', () => {
 	test('400: Responds with bad request message for invalid format', () => {
 		const voteUpdate = { inc_votes: 1 };
 		return request(app)
-			.patch('/api/articles/six')
+			.patch('/api/articles/article/six')
 			.send(voteUpdate)
 			.expect(400)
 			.then((res) => {
@@ -827,15 +827,15 @@ describe('ERROR HANDLING - POST /api/topics', () => {
 			});
 	});
 });
-describe('DELETE /api/articles/:article_id', () => {
+describe('DELETE /api/articles/article/:article_id', () => {
 	test('204: responds with an empty response body', () => {
-		return request(app).delete('/api/articles/1').expect(204);
+		return request(app).delete('/api/articles/article/1').expect(204);
 	});
 });
-describe('ERROR HANDLING - DELETE /api/articles/:article_id', () => {
+describe('ERROR HANDLING - DELETE /api/articles/article/:article_id', () => {
 	test('404: Responds with message for valid but not recognised article ID', () => {
 		return request(app)
-			.delete('/api/articles/1000')
+			.delete('/api/articles/article/1000')
 			.expect(404)
 			.then((res) => {
 				expect(res.body).toMatchObject({ msg: 'Content not found' });
@@ -843,7 +843,7 @@ describe('ERROR HANDLING - DELETE /api/articles/:article_id', () => {
 	});
 	test('400: Responds with bad request message for invalid format', () => {
 		return request(app)
-			.delete('/api/articles/six')
+			.delete('/api/articles/article/six')
 			.expect(400)
 			.then((res) => {
 				expect(res.body).toMatchObject({ msg: 'Bad request' });
