@@ -15,10 +15,11 @@ const {
 articleRouter.route('/').get(getArticles).post(postArticles);
 
 articleRouter
-	.route('/article/:article_id')
-	.get(byArticleID)
+	.route('/:article_id')
 	.patch(patchArticleID)
 	.delete(deleteArticleByID);
+
+articleRouter.route('/article/:article_id').get(byArticleID);
 
 articleRouter
 	.route('/:article_id/comments')
