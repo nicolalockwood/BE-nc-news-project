@@ -13,26 +13,26 @@ Please start by cloning this repo.
 
 - Run `NPM install`. This will download dependencies from package.JSON.
 
--Run `NPM setup-dbs`. This will initialise the data base ready to be populated
+- Run `NPM setup-dbs`. This will initialise the data base ready to be populated
 
--Run `NPM seed`. This will seed the newly set up database with values and data.
+- Run `NPM seed`. This will seed the newly set up database with values and data.
 
--Run `NPM test`. This is will enable testing suite to run.
+- Run `NPM test`. This is will enable testing suite to run.
 
 # ----Dependencies used----
 
 These will be insatlled from package.JSON, but are here in list form for reference:
 
--postgres
--husky
--express
--jest
--jest-extended
--jest-sorted
--pg-format
--supertest
--dotenv
--fs
+- postgres
+- husky
+- express
+- jest
+- jest-extended
+- jest-sorted
+- pg-format
+- supertest
+- dotenv
+- fs
 
 # ----Minimum Versions ----
 
@@ -47,4 +47,5 @@ pg: '^8.7.3'
 
 Please create enviroment variables to be able to clone and locally run this file succesfully. Please create the following files and double check they are succesfully in git ignore:
 
-- `.env.test` - In the body of this file please add PGDATABASE=nc_news_test -`.env.development` - In the body of this file please add PGDATABASE=nc_news
+- `.env.test` - In the body of this file please add PGDATABASE=nc_news_test
+- `.env.development` - In the body of this file please add PGDATABASE=nc_news

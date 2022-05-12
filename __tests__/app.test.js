@@ -489,10 +489,10 @@ describe('ERROR HANDLING - GET /api/articles/:article_id/comments', () => {
 	});
 });
 
-describe('GET /api', () => {
+describe('GET /api/endpoints', () => {
 	test('200: Response with a JSON object of a list of endpoints', () => {
 		return request(app)
-			.get('/api')
+			.get('/api/endpoints')
 			.expect(200)
 			.then((res) => {
 				expect(res.body).toBeInstanceOf(Object);
