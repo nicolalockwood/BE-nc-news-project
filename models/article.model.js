@@ -73,8 +73,8 @@ exports.selectArticles = (
 		queryPromise = db.query('SELECT count(*) FROM articles AS total_count;');
 	}
 
-	return queryPromise.then(({ rows }) => {
-		const count = rows[0].count;
+	return queryPromise.then(({ rows: countRows }) => {
+		const count = countRows[0].count;
 		const validColumns = [
 			'comment_count',
 			'article_id',
@@ -116,12 +116,11 @@ exports.selectArticles = (
 		}
 
 		queryStr += ` GROUP BY a.article_id ORDER BY ${sort_by} ${order} LIMIT ${limit} OFFSET ${actualPage[0]};`;
-		return db.query(queryStr, queryValues).then(({ rows }) => {
-			rows.forEach((row) => {
-				row.total_count = count;
+		return db.query(queryStr, queryValues).then(({ rows: articleRows }) => {
+			articleRows.forEach((articleRow) => {
+				articleRow.total_count = count;
 			});
-
-			return rows;
+			return articleRows;
 		});
 	});
 };
