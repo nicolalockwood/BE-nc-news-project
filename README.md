@@ -2,7 +2,7 @@
 
 This API serves JSON data for a news website, consisting of articles, comments, topics, and users info. It then uses these to create multiple end points each with a specific use, detailed in get/API.
 
-https://nicola-nc-news.herokuapp.com/api
+https://nicola-nc-news.herokuapp.com/api/endpoints
 
 Please start by cloning this repo.
 
